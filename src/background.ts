@@ -5,9 +5,8 @@ import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 const isDevelopment = process.env.NODE_ENV !== "production";
 
-
 // add backend
-require('./backend/server.js')
+require("./backend/server.js");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -50,7 +49,7 @@ function createWindow() {
 app.on("window-all-closed", () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  app.removeAllListeners()
+  app.removeAllListeners();
   if (process.platform !== "darwin") {
     app.quit();
   }
@@ -84,13 +83,13 @@ if (isDevelopment) {
   if (process.platform === "win32") {
     process.on("message", data => {
       if (data === "graceful-exit") {
-        app.removeAllListeners()
+        app.removeAllListeners();
         app.quit();
       }
     });
   } else {
     process.on("SIGTERM", () => {
-      app.removeAllListeners()
+      app.removeAllListeners();
       app.quit();
     });
   }

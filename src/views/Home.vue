@@ -1,18 +1,19 @@
 <template>
-  <div class="home">
+  <div class="home mainPage">
     <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+    <h1>Welcome to the CRF Managing Tool</h1>
+    With this tool you can create, edit, fill out and export a CRF.
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
-
-@Component({
-  components: {
-    HelloWorld
-  }
-})
-export default class Home extends Vue {}
+    export default {
+        name: "Home",
+        components: {
+        },
+        data() {
+          return {
+          }
+        }
+    }
 </script>

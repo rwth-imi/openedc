@@ -16,9 +16,9 @@ const routes: Array<RouteConfig> = [
     component: Home
   },
   {
-    path: '/patients',
+    path: "/patients",
     name: "Patients",
-    component: Patients,
+    component: Patients
   },
   {
     path: "/patients/register",
@@ -29,7 +29,7 @@ const routes: Array<RouteConfig> = [
     path: "/patient/:patientNumber",
     name: "Patient",
     component: Patient,
-    props: route => ({ patientNumber: route.query.patientNumber }),
+    props: route => ({ patientNumber: route.query.patientNumber })
   },
   {
     path: "/crfs",
@@ -45,8 +45,7 @@ const routes: Array<RouteConfig> = [
   {
     path: "/CRF/:crfId/:section",
     name: "CRF",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/CRF.vue")
+    component: () => import(/* webpackChunkName: "about" */ "../views/CRF.vue")
   },
   {
     path: "/about",
@@ -57,8 +56,7 @@ const routes: Array<RouteConfig> = [
   {
     path: "/help",
     name: "Help",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Help.vue")
+    component: () => import(/* webpackChunkName: "about" */ "../views/Help.vue")
   },
   {
     path: "/test",

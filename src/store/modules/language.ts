@@ -1,7 +1,7 @@
 import Vue from "vue";
 import i18n from "../../i18n";
 
-const supportedLanguages = ['en', 'de'];
+const supportedLanguages = ["en", "de"];
 
 export default {
   namespaced: true,

@@ -2,7 +2,9 @@
   <div id="app">
     <div id="nav">
       <b-navbar toggleable="lg" type="dark" variant="light">
-        <b-navbar-brand to="#"><img alt="Vue logo" src="./assets/logo.png" height="30px" /></b-navbar-brand>
+        <b-navbar-brand to="#"
+          ><img alt="Vue logo" src="./assets/logo.png" height="30px"
+        /></b-navbar-brand>
 
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
@@ -18,7 +20,12 @@
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown text="Lang" right>
-              <b-dropdown-item v-for="(lang, index) in languages" :key="`lang${index}`" @click="changeLanguage(lang)">{{ lang.title }}</b-dropdown-item>
+              <b-dropdown-item
+                v-for="(lang, index) in languages"
+                :key="`lang${index}`"
+                @click="changeLanguage(lang)"
+                >{{ lang.title }}</b-dropdown-item
+              >
             </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>
@@ -31,8 +38,7 @@
 import { mapGetters } from "vuex";
 export default {
   name: "app",
-  components: {
-  },
+  components: {},
   computed: {
     ...mapGetters("language", ["languages"])
   },
@@ -41,14 +47,13 @@ export default {
       this.$i18n.locale = lang.value;
       this.$store.dispatch("language/setLanguage", lang.value);
     }
-  },
+  }
 };
 </script>
 <style>
-
-.navbar.navbar-dark.bg-light{
-    background-color: #A9D18E!important;
- }
+.navbar.navbar-dark.bg-light {
+  background-color: #a9d18e !important;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -63,10 +68,10 @@ export default {
 }
 
 #nav a.router-link-exact-active {
-  color: #E2F0D9;
+  color: #e2f0d9;
 }
 
 .mainPage {
-  padding: 30px 0 0 0
+  padding: 30px 0 0 0;
 }
 </style>

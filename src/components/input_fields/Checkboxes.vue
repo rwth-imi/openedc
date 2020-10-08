@@ -14,23 +14,23 @@
             ></b-form-checkbox-group>
           </b-form-group>
 
-          <div>Selected: <strong>{{ selected }}</strong></div>
+          <div>
+            Selected: <strong>{{ selected }}</strong>
+          </div>
         </b-col>
       </b-row>
     </b-container>
-
   </div>
 </template>
 
 <script>
-  export default {
-    name: 'Checkboxes',
-    props: ['options'],
-    data() {
-      return {
-        selected: [], // Must be an array reference!
-
-      }
-    }
+export default {
+  name: "Checkboxes",
+  props: ["options"],
+  data() {
+    return {
+      selected: [] // Must be an array reference!
+    };
   }
+};
 </script>

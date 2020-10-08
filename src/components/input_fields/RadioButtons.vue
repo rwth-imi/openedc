@@ -15,21 +15,22 @@
             ></b-form-radio-group>
           </b-form-group>
 
-          <div class="mt-3">Selected: <strong>{{ selected }}</strong></div>
+          <div class="mt-3">
+            Selected: <strong>{{ selected }}</strong>
+          </div>
         </b-col>
       </b-row>
     </b-container>
-
   </div>
 </template>
 
 <script>
-  export default {
-    props: ['options'],
-    data() {
-      return {
-        selected: '',
-      }
-    }
+export default {
+  props: ["options"],
+  data() {
+    return {
+      selected: ""
+    };
   }
+};
 </script>

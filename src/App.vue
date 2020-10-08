@@ -18,8 +18,7 @@
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
             <b-nav-item-dropdown text="Lang" right>
-              <b-dropdown-item href="#">EN</b-dropdown-item>
-              <b-dropdown-item href="#">DE</b-dropdown-item>
+              <b-dropdown-item v-for="(lang, index) in languages" :key="`lang${index}`" @click="changeLanguage(lang)">{{ lang.title }}</b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>
@@ -28,7 +27,23 @@
     <router-view />
   </div>
 </template>
-
+<script>
+import { mapGetters } from "vuex";
+export default {
+  name: "app",
+  components: {
+  },
+  computed: {
+    ...mapGetters("language", ["languages"])
+  },
+  methods: {
+    changeLanguage(lang) {
+      this.$i18n.locale = lang.value;
+      this.$store.dispatch("language/setLanguage", lang.value);
+    }
+  },
+};
+</script>
 <style>
 
 .navbar.navbar-dark.bg-light{

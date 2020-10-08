@@ -1,8 +1,8 @@
 <template>
   <div class="home mainPage">
     <img alt="Vue logo" src="../assets/logo.png" />
-    <h1>Welcome to the CRF Managing Tool</h1>
-    With this tool you can create, edit, fill out and export a CRF.
+    <h1>{{ $t("home.welcome") }}</h1>
+    {{ $t("home.message")}}
   </div>
 </template>
 

@@ -1,3 +1,11 @@
 {
-  "message": "hello i18n !!"
+  "message": "hello i18n !!",
+  "languages": {
+    "en": "English",
+    "de": "German"
+  },
+  "home": {
+    "welcome": "Welcome to the CRF Managing Tool",
+    "message": "With this tool you can create, edit, fill out and export a CRF."
+  }
 }

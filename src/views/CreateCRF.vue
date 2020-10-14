@@ -1,56 +1,21 @@
 <template>
-  <div class="mainPage">
-    <h1>Create CRF</h1>
-    <div>
-      <b-card bg-variant="light">
-        <b-form @submit="onSubmit" @reset="onReset" v-if="show">
-          <b-form-group
-            label-cols-lg="3"
-            label="Create CRF"
-            label-size="lg"
-            label-class="font-weight-bold pt-0"
-            class="mb-0"
-          >
-            <!-- <b-form-group label-cols-sm="3" label="Name:" label-align-sm="right" label-for="nested-name">
-          <b-form-input id="nested-name"></b-form-input>
-        </b-form-group>
-
-        <b-form-group label-cols-sm="3" label="language:" label-align-sm="right" label-for="nested-lang">
-          <b-form-input id="nested-lang"></b-form-input>
-        </b-form-group>
-
-        <b-form-group label-cols-sm="3" label="Description:" label-align-sm="right" label-for="nested-description">
-          <b-form-textarea id="nested-description"></b-form-textarea>
-        </b-form-group>
-
-        <b-form-group label-cols-sm="3" label="Version:" label-align-sm="right" label-for="nested-version">
-          <b-form-input id="nested-version"></b-form-input>
-        </b-form-group>
-
-        <b-form-group label-cols-sm="3" label="Version Description:" label-align-sm="right" label-for="nested-version-description">
-          <b-form-input id="nested-version-description"></b-form-input>
-        </b-form-group> -->
-
-            <b-form-group
-              label-cols-sm="3"
-              label="Upload File:"
-              label-align-sm="right"
-              label-for="nested-file"
-            >
-              <b-form-file
-                v-model="form.file"
-                :state="Boolean(form.file)"
-                placeholder="Choose a file or drop it here..."
-                drop-placeholder="Drop file here..."
-              ></b-form-file>
-            </b-form-group>
+<div class="mainPage">
+  <h1>Create CRF</h1>
+  <div>
+    <b-card bg-variant="light">
+      <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+        <b-form-group label-cols-lg="3" label="Create CRF" label-size="lg" label-class="font-weight-bold pt-0" class="mb-0">
+          <b-form-group label-cols-sm="3" label="Upload File:" label-align-sm="right" label-for="nested-file">
+            <b-form-file v-model="form.file" :state="Boolean(form.file)" placeholder="Choose a file or drop it here..." drop-placeholder="Drop file here..." name="filename"></b-form-file>
+            <div class="mt-3">Selected file: {{ form.file ? form.file.name : '' }}</div>
           </b-form-group>
-          <b-button type="submit" variant="primary">Submit</b-button>
-          <b-button type="reset" variant="danger">Reset</b-button>
-        </b-form>
-      </b-card>
-    </div>
+        </b-form-group>
+        <b-button type="submit" variant="primary">Submit</b-button>
+        <b-button type="reset" variant="danger">Reset</b-button>
+      </b-form>
+    </b-card>
   </div>
+</div>
 </template>
 
 <script>
@@ -68,8 +33,10 @@ export default {
   methods: {
     onSubmit(evt) {
       evt.preventDefault();
-      console.log(this.form)
-      this.axios.post('upload/', this.form)
+      const formData = new FormData();
+      formData.append("filename", "TestCRF-" + Date.now() + ".json")
+      formData.append("file", this.form.file);
+      this.axios.post('upload/', formData)
         .then((data) => {
           console.log('response', data)
         })

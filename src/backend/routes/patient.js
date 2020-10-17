@@ -10,7 +10,6 @@ db.patients = new Datastore({
 });
 
 router.post('/api/patient/', (req, res, next) => {
-  console.log(req, req.patient)
   db.patients.insert(req.body.patient, (err, inserted) => {
     if (err) {
       console.log('error', err)
@@ -20,12 +19,16 @@ router.post('/api/patient/', (req, res, next) => {
         payload: null
       });
     } else {
-      if (!req.boy.patient.patientId) {
-        db.patients.update({
-          "_id": inserted._id
-        }, {
-          "patientId": insterted._id
-        }, {}, function(err, numReplaced) {
+      if (!req.body.patient.patientId) {
+         db.patients.update({
+           "_id": inserted._id
+         }, {
+           $set: { patientId: inserted._id}
+         }, {
+           multi: false,
+           returnUpdatedDocs: true
+         }, function(err, numReplaced, affectedDocuments) {
+           console.log('affectedDocuments', affectedDocuments)
           if (err) {
             console.log('error', err)
             res.json({
@@ -34,20 +37,20 @@ router.post('/api/patient/', (req, res, next) => {
               payload: null
             });
           } else {
-            inserted.patientId = inserted._id;
             res.json({
               success: true,
               error: false,
-              payload: inserted
+              payload: affectedDocuments
             });
           }
         });
+      } else {
+        res.json({
+          success: true,
+          error: false,
+          payload: inserted
+        });
       }
-      res.json({
-        success: true,
-        error: false,
-        payload: inserted
-      });
     }
   })
 })

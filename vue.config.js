@@ -5,6 +5,12 @@ module.exports = {
       fallbackLocale: "en",
       localeDir: "locales",
       enableInSFC: false
+    },
+    electronBuilder: {
+      chainWebpackRendererProcess(config) {
+        config.plugins.delete('workbox')
+        config.plugins.delete('pwa')
+      }
     }
   }
 };

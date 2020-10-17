@@ -2,7 +2,7 @@
   <div class="mainPage">
     <h1>Patients</h1>
     <div class="" align="right">
-      <b-button pill variant="success" to="/register">Add</b-button>
+      <b-button pill variant="success" to="/patients/register">Add</b-button>
     </div>
     <b-row class="my-1">
       <b-col sm="2">
@@ -12,19 +12,19 @@
         <b-form-input
           v-model="search"
           size="sm"
-          placeholder="Search Patient by number"
+          placeholder="Search Patient by id"
         ></b-form-input>
       </b-col>
     </b-row>
     <b-table striped hover :items="filteredList" :fields="fields">
-      <template v-slot:cell(patientNumber)="data">
+      <template v-slot:cell(patientId)="data">
         <router-link
-          :to="{ name: 'Patient', query: { patientNumber: data.value } }"
+          :to="{ name: 'Patient', query: { patientId: data.value } }"
           >{{ data.value }}</router-link
         >
       </template>
-      <template v-slot:cell(birthday)="data">
-        {{ data.value.toDateString() }}
+      <template v-slot:cell(birth)="data">
+        {{ data.value }}
       </template>
       <template v-slot:cell(crfs)="data">
         <div v-for="index in data.value" :key="index">
@@ -34,7 +34,7 @@
               params: {
                 crfId: getCRFId(index),
                 section: 0,
-                patientNumber: data.item.patientNumber
+                patientId: data.item.patientId
               }
             }"
             >{{ getCRFName(index) }}</router-link
@@ -55,15 +55,27 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "Patients",
   components: {},
+  mounted() {
+    this.$store.dispatch("patients/GET_PATIENTS");
+  },
+  computed: {
+    ...mapState("patients", ["patients"]),
+    filteredList() {
+      return this.patients.filter(patient => {
+        return patient.patientId.includes(this.search.toLowerCase())
+      })
+    }
+  },
   data() {
     return {
       search: "",
       fields: [
         {
-          key: "patientNumber",
+          key: "patientId",
           label: "No.",
           sortable: true
         },
@@ -73,7 +85,7 @@ export default {
           sortable: true
         },
         {
-          key: "birthday",
+          key: "birth",
           label: "Day of Birth",
           sortable: true
         },
@@ -82,44 +94,6 @@ export default {
           label: "Filled CRFs"
         },
         "Settings"
-      ],
-      patients: [
-        {
-          patientNumber: "398961",
-          sex: "female",
-          birthday: new Date(),
-          crfs: [0, 1]
-        },
-        {
-          patientNumber: "594910",
-          sex: "male",
-          birthday: new Date(),
-          crfs: [0]
-        },
-        {
-          patientNumber: "394563",
-          sex: "female",
-          birthday: new Date(),
-          crfs: [1]
-        },
-        {
-          patientNumber: "323464",
-          sex: "male",
-          birthday: new Date(),
-          crfs: []
-        },
-        {
-          patientNumber: "640302",
-          sex: "female",
-          birthday: new Date(),
-          crfs: [0, 1]
-        },
-        {
-          patientNumber: "398962",
-          sex: "female",
-          birthday: new Date(),
-          crfs: []
-        }
       ],
       crfs: [
         {
@@ -145,13 +119,6 @@ export default {
       return this.crfs[index].id;
     }
   },
-  computed: {
-    filteredList() {
-      return this.patients.filter(patient => {
-        return patient.patientNumber.includes(this.search);
-      });
-    }
-  }
 };
 </script>
 

@@ -1,11 +1,12 @@
 <template>
   <div class="mainPage">
-    <h1>Create CRF</h1>
+    <h1>Register Patient</h1>
     <div>
       <b-card bg-variant="light">
+        <b-form @submit="onSubmit" @reset="onReset">
         <b-form-group
           label-cols-lg="3"
-          label="Create CRF"
+          label="Register Patient"
           label-size="lg"
           label-class="font-weight-bold pt-0"
           class="mb-0"
@@ -16,7 +17,7 @@
             label-align-sm="right"
             label-for="nested-firstname"
           >
-            <b-form-input id="nested-firstname"></b-form-input>
+            <b-form-input id="nested-firstname" v-model="patient.firstName"></b-form-input>
           </b-form-group>
 
           <b-form-group
@@ -25,7 +26,7 @@
             label-align-sm="right"
             label-for="nested-lastname"
           >
-            <b-form-input id="nested-lastname"></b-form-input>
+            <b-form-input id="nested-lastname" v-model="patient.lastName"></b-form-input>
           </b-form-group>
 
           <b-form-group
@@ -36,7 +37,7 @@
           >
             <b-form-radio-group
               id="radio-sex"
-              v-model="sex"
+              v-model="patient.sex"
               name="radio-sub-component"
             >
               <b-form-radio value="male">Male</b-form-radio>
@@ -44,35 +45,21 @@
               <b-form-radio value="none" disabled>None</b-form-radio>
             </b-form-radio-group>
           </b-form-group>
-
           <b-form-group
             label-cols-sm="3"
-            label="Description:"
+            label="Date of Birth:"
             label-align-sm="right"
-            label-for="nested-description"
+            label-for="birth-datepicker"
           >
-            <b-form-textarea id="nested-description"></b-form-textarea>
+            <b-form-datepicker id="birth-datepicker" v-model="patient.birth" class="mb-2"></b-form-datepicker>
           </b-form-group>
 
-          <b-form-group
-            label-cols-sm="3"
-            label="Version:"
-            label-align-sm="right"
-            label-for="nested-version"
-          >
-            <b-form-input id="nested-version"></b-form-input>
-          </b-form-group>
-
-          <b-form-group
-            label-cols-sm="3"
-            label="Version Description:"
-            label-align-sm="right"
-            label-for="nested-version-description"
-          >
-            <b-form-input id="nested-version-description"></b-form-input>
-          </b-form-group>
         </b-form-group>
+        <b-button type="submit" variant="primary">Submit</b-button>
+        <b-button type="reset" variant="danger">Reset</b-button>
+      </b-form>
       </b-card>
+      {{ patient}}
     </div>
   </div>
 </template>
@@ -82,7 +69,35 @@ export default {
   name: "PatientRegister",
   components: {},
   data() {
-    return {};
+    return {
+      patient: {
+        firstName: "",
+        lastName: "",
+        sex: "none",
+        birth: null
+      }
+    };
+  },
+  methods: {
+    onSubmit(evt) {
+      evt.preventDefault();
+      this.axios.post('patient/', {
+        "patient": this.patient
+      })
+        .then((data) => {
+          console.log('response', data)
+        })
+    },
+    onReset(evt) {
+      evt.preventDefault();
+      // Reset our form values
+      this.form.file = [];
+      // Trick to reset/clear native browser form validation state
+      this.show = false;
+      this.$nextTick(() => {
+        this.show = true;
+      });
+    }
   }
 };
 </script>

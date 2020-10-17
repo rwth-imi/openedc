@@ -10,7 +10,7 @@ export default {
   },
   getters: {
     languages(state) {
-      const ret = [];
+      const ret : object[] = [];
       supportedLanguages.forEach(element => {
         if (!element.startsWith("_")) {
           ret.push({

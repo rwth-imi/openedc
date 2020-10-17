@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+var cors = require('cors')
 
 const patient = require("./routes/patient.js");
 
@@ -12,6 +13,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
 }));
+// Header
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+
+  next()
+})
+app.use(cors())
 
 
 // NeDB
@@ -40,13 +49,7 @@ const upload = multer({
   storage: storage
 });
 
-// Header
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:8080')
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
 
-  next()
-})
 
 // Routes
 app.get("/", function(req, res) {

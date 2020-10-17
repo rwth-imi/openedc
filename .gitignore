@@ -2,6 +2,7 @@
 node_modules
 /dist
 /src/backend/uploads
+/src/backend/db
 
 
 # local env files

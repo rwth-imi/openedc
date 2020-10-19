@@ -7,21 +7,21 @@
     <b-table striped hover :items="crfs" :fields="fields">
       <template v-slot:cell(name)="data">
         <router-link
-          :to="{ name: 'CRF', params: { crfId: data.item.id, section: 0 } }"
+          :to="{ name: 'CRF', params: { crfId: data.item._id, section: 0 } }"
           >{{ data.value }}</router-link
         >
       </template>
       <template v-slot:cell(countFilled)="data">
         <router-link
-          :to="{ name: 'CRFsFilled', params: { crfId: data.item.id } }"
+          :to="{ name: 'CRFsFilled', params: { crfId: data.item._id } }"
           >{{ data.value }}</router-link
         >
       </template>
       <template v-slot:cell(createdAt)="data">
         {{ (new Date(data.value)).toDateString() }}
       </template>
-      <template v-slot:cell(settings)="">
-        <b-button pill variant="outline-success">Edit</b-button>
+      <template v-slot:cell(settings)="data">
+        <b-button pill variant="outline-success" :to="{ name: 'EditCRF', params: {crfId: data.item._id }}">Edit</b-button>
         <b-button pill variant="outline-success">Export</b-button>
         <b-button pill variant="outline-danger">Delete</b-button>
       </template>

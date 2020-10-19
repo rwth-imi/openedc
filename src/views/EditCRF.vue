@@ -1,6 +1,6 @@
 <template>
 <div class="mainPage">
-  <h1>Create CRF</h1>
+  <h1>Edit CRF</h1>
   <div>
     <b-card bg-variant="light">
       <b-form @submit="onSubmit" @reset="onReset" v-if="show">
@@ -20,23 +20,28 @@
 
 <script>
 export default {
-  name: "CreateCRF",
+  name: "EditCRF",
   components: {},
   data() {
     return {
       form: {
         file: []
       },
-      show: true
+      show: true,
+      crfId: null
     };
+  },
+  created() {
+    console.log('created', this.$route)
+    this.crfId = this.$route.params.crfId;
   },
   methods: {
     onSubmit(evt) {
       evt.preventDefault();
       const formData = new FormData();
-      formData.append("filename", "TestCRF-" + Date.now() + ".json")
+      formData.append("filename", "EditedVersion-" + Date.now() + ".json")
       formData.append("file", this.form.file);
-      this.axios.post('crf/upload/', formData)
+      this.axios.post('crf/edit/'+ this.crfId, formData)
         .then((data) => {
           console.log('response', data)
         })

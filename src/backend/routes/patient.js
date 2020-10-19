@@ -70,7 +70,7 @@ router.put('/api/patient/:patientId', (req, res, next) => {
       res.json({
         success: true,
         error: false,
-        payload: req.patient
+        payload: req.body.patient
       });
     }
   });

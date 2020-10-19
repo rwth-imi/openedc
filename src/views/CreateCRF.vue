@@ -36,7 +36,7 @@ export default {
       const formData = new FormData();
       formData.append("filename", "TestCRF-" + Date.now() + ".json")
       formData.append("file", this.form.file);
-      this.axios.post('upload/', formData)
+      this.axios.post('crf/upload/', formData)
         .then((data) => {
           console.log('response', data)
         })

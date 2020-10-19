@@ -1,12 +1,11 @@
 const express = require("express");
 
 var bodyParser = require('body-parser');
-const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
+
 var cors = require('cors')
 
 const patient = require("./routes/patient.js");
+const crf = require("./routes/crf.js");
 
 const app = express();
 app.use(bodyParser.json());
@@ -31,23 +30,8 @@ db.data = new Datastore({
   filename: 'db/data.db',
   autoload: true
 });
-db.crfs = new Datastore({
-  filename: 'db/crfs.db',
-  autoload: true
-});
 
-// File Upload
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, 'uploads/')
-  },
-  filename: function(req, file, cb) {
-    cb(null, req.body.filename)
-  }
-})
-const upload = multer({
-  storage: storage
-});
+
 
 
 
@@ -57,37 +41,11 @@ app.get("/", function(req, res) {
 });
 
 const route = express.Router();
-route.post("/api/upload/", upload.single("file"), (req, res, next) => {
-  const absolutePath = path.join(__dirname, req.file.path);
-  const jsonString = fs.readFileSync(absolutePath, "utf-8");
-  const jsonObject = JSON.parse(jsonString);
 
-  const crf = {
-    crfName: jsonObject.name,
-    crfLanguage: jsonObject.language,
-    crfDescription: jsonObject.description,
-  }
-
-  db.crfs.insert(crf, function(err, inserted) {
-    if (err) {
-      console.log('error', err)
-      res.json({
-        success: false,
-        error: err,
-        payload: null
-      });
-    } else {
-      res.json({
-        success: true,
-        error: false,
-        payload: inserted
-      });
-    }
-  })
-});
 
 app.use(route)
 app.use('/', patient)
+app.use('/', crf)
 
 
 

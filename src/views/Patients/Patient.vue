@@ -1,6 +1,6 @@
 <template>
   <div class="mainPage">
-    <h1>Patient: {{ patientNumber }}</h1>
+    <h1>Patient: {{ patientId }}</h1>
     <b-row class="my-1">
       <b-col sm="2">
         <label for="input-small">Search:</label>
@@ -37,7 +37,7 @@
 export default {
   name: "Patient",
   components: {},
-  props: ["patientNumber"],
+  props: ["patientId"],
   data() {
     return {
       search: "",

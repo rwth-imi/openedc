@@ -18,7 +18,7 @@
         >
       </template>
       <template v-slot:cell(createdAt)="data">
-        {{ data.value.toDateString() }}
+        {{ (new Date(data.value)).toDateString() }}
       </template>
       <template v-slot:cell(settings)="">
         <b-button pill variant="outline-success">Edit</b-button>
@@ -30,9 +30,21 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   name: "CRFs",
   components: {},
+  mounted() {
+    this.$store.dispatch("crfs/GET_CRFS");
+  },
+  computed: {
+    ...mapState("crfs", ["crfs"]),
+    filteredList() {
+      return this.crfs.filter(crf => {
+        return crf._id.includes(this.search.toLowerCase())
+      })
+    }
+  },
   data() {
     return {
       fields: [
@@ -50,20 +62,6 @@ export default {
           sortable: true
         },
         "Settings"
-      ],
-      crfs: [
-        {
-          name: "First CRF",
-          countFilled: 2,
-          createdAt: new Date(),
-          id: 0
-        },
-        {
-          name: "Second CRF",
-          countFilled: 4,
-          createdAt: new Date(),
-          id: 1
-        }
       ]
     };
   }

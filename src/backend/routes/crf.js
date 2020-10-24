@@ -24,33 +24,87 @@ db.crfs = new Datastore({
   autoload: true
 });
 
+function saveNewCRF(crf, errorCB, successCB) {
+  if (!crf.version) {
+    crf.version = 1;
+  }
+  crf.newestVersion = null;
+
+  db.crfs.insert(crf, function(err, inserted) {
+    if (err) {
+      console.log('error', err)
+      errorCB(err)
+    } else {
+      successCB(inserted)
+    }
+  })
+}
+
+function saveEditCRF(crfId, crf, errorCB, successCB) {
+  console.log('saveEdit')
+  db.crfs.findOne({
+    "_id": crfId
+  }, (err, doc) => {
+    if (err) {
+      console.log('error', err)
+      errorCB(err)
+    } else {
+      // TODO: Version aus Datein nehmen/vergleichen
+      crf.version = doc.version + 1;
+      crf.newestVersion = null;
+      db.crfs.insert(crf, function(err, inserted) {
+        if (err) {
+          console.log('error', err)
+          errorCB(err)
+        } else {
+          db.crfs.update({
+            $where: function() {
+              console.log(this)
+              return this.newestVersion == crfId || this._id == crfId;
+            }
+          }, {
+            $set: {
+              newestVersion: inserted._id
+            }
+          }, {
+            multi: true,
+            returnUpdatedDocs: true
+          }, (err, numReplaced, affectedDocuments) => {
+            console.log(numReplaced, affectedDocuments)
+            if (err) {
+              console.log('error', err)
+              errorCB(err)
+            } else {
+              successCB(inserted)
+            }
+          })
+        }
+      })
+    }
+  })
+}
+
 router.post("/api/crf/upload/", upload.single("file"), (req, res, next) => {
   const absolutePath = path.join(path.resolve("./"), req.file.path);
   const jsonString = fs.readFileSync(absolutePath, "utf-8");
   const jsonObject = JSON.parse(jsonString);
 
   // Todo: Parsing! From Excel to json
+  jsonObject.createdAt = Date.now();
+  jsonObject.createdBy = req.body.user || "defaultUser"; // TODO: user management
 
-  if (!jsonObject.version) {
-    jsonObject.version = 1;
-  }
-  jsonObject.createdAt = Date.now()
-
-  db.crfs.insert(jsonObject, function(err, inserted) {
-    if (err) {
-      console.log('error', err)
-      res.json({
-        success: false,
-        error: err,
-        payload: null
-      });
-    } else {
-      res.json({
-        success: true,
-        error: false,
-        payload: inserted
-      });
-    }
+  saveNewCRF(jsonObject, (err) => {
+    res.json({
+      success: false,
+      error: err,
+      payload: null
+    })
+  }, (payload) => {
+    res.json({
+      success: true,
+      error: false,
+      payload: payload
+    });
   })
 });
 
@@ -61,61 +115,21 @@ router.post("/api/crf/edit/:crfId", upload.single("file"), (req, res, next) => {
 
   // Todo: Parsing! From Excel to json
 
-  jsonObject.createdAt = Date.now()
+  jsonObject.createdAt = Date.now();
+  jsonObject.createdBy = req.body.user || "defaultUser"; // TODO: user management
 
-  db.crfs.find({
-    "crfId": req.params.crfId
-  }).sort({
-    version: -1
-  }).exec((err, docs) => {
-    // TODO: Version aus Datein nehmen/vergleichen
-    jsonObject.version = docs[0].version + 1;
-    jsonObject.crfId = req.params.crfId;
-    db.crfs.insert(jsonObject, (err, inserted) => {
-      if (err) {
-        console.log('error', err)
-        res.json({
-          success: false,
-          error: err,
-          payload: null
-        });
-      } else {
-        if (!inserted.crfId) {
-          db.crfs.update({
-            "_id": inserted._id
-          }, {
-            $set: {
-              crfId: inserted._id
-            }
-          }, {
-            multi: false,
-            returnUpdatedDocs: true
-          }, function(err, numReplaced, affectedDocuments) {
-            console.log('affectedDocuments', affectedDocuments)
-            if (err) {
-              console.log('error', err)
-              res.json({
-                success: false,
-                error: err,
-                payload: null
-              });
-            } else {
-              res.json({
-                success: true,
-                error: false,
-                payload: affectedDocuments
-              });
-            }
-          });
-        } else {
-          res.json({
-            success: true,
-            error: false,
-            payload: inserted
-          });
-        }
-      }
+  saveEditCRF(req.params.crfId, jsonObject, (err) => {
+    res.json({
+      success: false,
+      error: err,
+      payload: null
     })
+  }, (payload) => {
+    res.json({
+      success: true,
+      error: false,
+      payload: payload
+    });
   })
 });
 
@@ -123,96 +137,42 @@ router.post('/api/crf/', (req, res, next) => {
   if (!req.body.crf.version) {
     req.body.crf.version = 1;
   }
-  db.crfs.insert(req.body.crf, (err, inserted) => {
-    if (err) {
-      console.log('error', err)
-      res.json({
-        success: false,
-        error: err,
-        payload: null
-      });
-    } else {
-      res.json({
-        success: true,
-        error: false,
-        payload: inserted
-      });
-    }
+  saveNewCRF(req.body.crf, (err) => {
+    res.json({
+      success: false,
+      error: err,
+      payload: null
+    })
+  }, (payload) => {
+    res.json({
+      success: true,
+      error: false,
+      payload: payload
+    });
   })
 })
 
 router.put('/api/crf/:crfId', (req, res, next) => {
-  db.crfs.find({
-    "crfId": req.params.crfId
-  }).sort({
-    version: -1
-  }).exec((err, docs) => {
-    req.body.crf.version = docs[0].version + 1;
-    db.crfs.insert(req.body.crf, (err, inserted) => {
-      if (err) {
-        console.log('error', err)
-        res.json({
-          success: false,
-          error: err,
-          payload: null
-        });
-      } else {
-        res.json({
-          success: true,
-          error: false,
-          payload: inserted
-        });
-      }
+  saveEditCRF(req.params.crfId, req.body.crf, (err) => {
+    res.json({
+      success: false,
+      error: err,
+      payload: null
     })
+  }, (payload) => {
+    res.json({
+      success: true,
+      error: false,
+      payload: payload
+    });
   })
 })
 
 router.get('/api/crf/', (req, res, next) => {
-  db.crfs.find({}, (err, docs) => {
-    if (err) {
-      console.log('error', err)
-      res.json({
-        success: false,
-        error: err,
-        payload: null
-      });
-    } else {
-      res.json({
-        success: true,
-        error: false,
-        payload: docs
-      });
-    }
-  })
-})
-
-router.get('/api/crf/:crfId', (req, res, next) => {
   db.crfs.find({
-    "crfId": req.params.crfId
-  }).sort({
-    version: -1
-  }).exec((err, docs) => {
-    if (err) {
-      console.log('error', err)
-      res.json({
-        success: false,
-        error: err,
-        payload: null
-      });
-    } else {
-      res.json({
-        success: true,
-        error: false,
-        payload: docs[0]
-      });
+    $where: function() {
+      return this.newestVersion === null || this._id === this.newestVersion;
     }
-  })
-})
-
-router.get('/api/crf/:crfId/:version', (req, res, next) => {
-  db.crfs.find({
-    "crfId": req.params.crfId,
-    "version": req.params.version
   }, (err, docs) => {
     if (err) {
       console.log('error', err)
@@ -231,11 +191,10 @@ router.get('/api/crf/:crfId/:version', (req, res, next) => {
   })
 })
 
-router.delete('/api/crf/:crfId/:version', (req, res, next) => {
-  db.crfs.remove({
-    "crfId": req.params.crfId,
-    "version": req.params.version
-  }, {}, (err, numRemoved) => {
+router.get('/api/crf/:crfId', (req, res, next) => {
+  db.crfs.findOne({
+    "_id": req.params.crfId,
+  }, (err, doc) => {
     if (err) {
       console.log('error', err)
       res.json({
@@ -247,18 +206,16 @@ router.delete('/api/crf/:crfId/:version', (req, res, next) => {
       res.json({
         success: true,
         error: false,
-        payload: numRemoved
+        payload: doc
       });
     }
   })
 })
 
-router.delete('/api/crf/:crfId/', (req, res, next) => {
-  db.crfs.remove({
-    "_id": req.params.crfId
-  }, {
-    multi: true
-  }, (err, numRemoved) => {
+router.get('/api/crf/:crfId/newest', (req, res, next) => {
+  db.crfs.findOne({
+    "_id": req.params.crfId,
+  }, (err, doc) => {
     if (err) {
       console.log('error', err)
       res.json({
@@ -267,11 +224,102 @@ router.delete('/api/crf/:crfId/', (req, res, next) => {
         payload: null
       });
     } else {
+      db.crfs.findOne({
+        "_id": doc.newestVersion
+      }, (err, crf) => {
+        if (err) {
+          console.log('error', err)
+          res.json({
+            success: false,
+            error: err,
+            payload: null
+          });
+        } else {
+          res.json({
+            success: true,
+            error: false,
+            payload: crf
+          });
+        }
+      })
+    }
+  })
+})
+
+router.get('/api/crf/:crfId/:version', (req, res, next) => {
+  db.crfs.findOne({
+    "_id": req.params.crfId,
+  }, (err, doc) => {
+    if (err) {
+      console.log('error', err)
       res.json({
-        success: true,
-        error: false,
-        payload: numRemoved
+        success: false,
+        error: err,
+        payload: null
       });
+    } else {
+      db.crfs.findOne({
+        "newestVersion": doc.newestVersion,
+        "version": req.params.version
+      }, (err, crf) => {
+        if (err) {
+          console.log('error', err)
+          res.json({
+            success: false,
+            error: err,
+            payload: null
+          });
+        } else {
+          res.json({
+            success: true,
+            error: false,
+            payload: crf
+          });
+        }
+      })
+    }
+  })
+})
+
+router.delete('/api/crf/:crfId/', (req, res, next) => {
+  const deleteItem = {
+    crf: {},
+    createdAt: Date.now(),
+    createdBy: req.body.user || "defaultUser", // TODO: user management
+    deleted: true,
+    newestVersion: null
+  }
+  db.crfs.insert(deleteItem, (err, inserted) => {
+    if (err) {
+      console.log('error', err)
+      res.json({
+        success: false,
+        error: err,
+        payload: null
+      });
+    } else {
+      db.crfs.update({
+        "_id": req.params.crfId
+      }, {
+        $set: {
+          "newestVersion": inserted._id
+        }
+      }, {}, (err, numReplaced) => {
+        if (err) {
+          console.log('error', err)
+          res.json({
+            success: false,
+            error: err,
+            payload: null
+          });
+        } else {
+          res.json({
+            success: true,
+            error: false,
+            payload: null
+          });
+        }
+      })
     }
   })
 })

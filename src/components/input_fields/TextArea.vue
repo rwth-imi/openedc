@@ -7,7 +7,8 @@
         </b-col>
         <b-col sm="9">
           <b-form-textarea
-            v-model="text"
+            @change="changed()"          
+            v-model="localValue"
             :id="options.name"
             :placeholder="options.defaultValue"
           ></b-form-textarea>
@@ -19,11 +20,23 @@
 
 <script>
 export default {
-  props: ["options"],
+  props: ["options", "value"],
+  created() {
+    if(!this.value) {
+      this.localValue = this.options.defaultValue;
+    } else {
+      this.localValue = this.value;
+    }
+  },
   data() {
     return {
-      text: ""
-    };
+      localValue: null
+    }
+  },
+  methods:{
+    changed() {
+      this.$emit('changed', this.localValue);
+    },
   }
 };
 </script>

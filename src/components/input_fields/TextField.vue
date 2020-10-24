@@ -1,34 +1,38 @@
 <template>
-  <div>
-    <b-container fluid>
-      <b-row class="my-1">
-        <b-col sm="3">
-          <label :for="options.name">{{ options.label }}:</label>
-        </b-col>
-        <b-col sm="9">
-          <b-form-input
-            v-model="value"
-            :id="options.name"
-            :type="options.validationType"
-            :placeholder="options.defaultValue"
-          ></b-form-input>
-        </b-col>
-      </b-row>
-    </b-container>
-  </div>
+<div>
+  <b-container fluid>
+    <b-row class="my-1">
+      <b-col sm="3">
+        <label :for="options.name">{{ options.label }}:</label>
+      </b-col>
+      <b-col sm="9">
+        <b-form-input @change="changed()" v-model="localValue" :id="options.name" :type="options.validationType" :placeholder="options.defaultValue"></b-form-input>
+      </b-col>
+    </b-row>
+  </b-container>
+</div>
 </template>
 
 <script>
 export default {
   name: "TextField",
-  props: ["options"],
+  props: ["options", "value"],
   created() {
-    console.log("options", this.options);
+    if(!this.value) {
+      this.localValue = this.options.defaultValue;
+    } else {
+      this.localValue = this.value;
+    }
   },
   data() {
     return {
-      value: this.options.placeholder
-    };
+      localValue: null
+    }
+  },
+  methods:{
+    changed() {
+      this.$emit('changed', this.localValue);
+    },
   }
 };
 </script>

@@ -8,14 +8,15 @@
         <b-col sm="9">
           <b-form-group>
             <b-form-checkbox-group
+              @change="changed()"           
               :id="options.name"
-              v-model="selected"
+              v-model="localValue"
               :options="options.choices"
             ></b-form-checkbox-group>
           </b-form-group>
 
           <div>
-            Selected: <strong>{{ selected }}</strong>
+            Selected: <strong>{{ localValue }}</strong>
           </div>
         </b-col>
       </b-row>
@@ -26,11 +27,23 @@
 <script>
 export default {
   name: "Checkboxes",
-  props: ["options"],
+  props: ["options", "value"],
+  created() {
+    if(!this.value) {
+      this.localValue = this.options.defaultValue;
+    } else {
+      this.localValue = this.value;
+    }
+  },
   data() {
     return {
-      selected: [] // Must be an array reference!
-    };
+      localValue: null
+    }
+  },
+  methods:{
+    changed() {
+      this.$emit('changed', this.localValue);
+    },
   }
 };
 </script>

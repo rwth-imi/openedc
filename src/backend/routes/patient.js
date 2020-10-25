@@ -89,9 +89,9 @@ router.get('/api/patient/', (req, res, next) => {
 })
 
 router.get('/api/patient/:patientId', (req, res, next) => {
-  db.patients.find({
+  db.patients.findOne({
     "patientId": req.params.patientId
-  }, (err, docs) => {
+  }, (err, doc) => {
     if (err) {
       console.log('error', err)
       res.json({
@@ -103,7 +103,7 @@ router.get('/api/patient/:patientId', (req, res, next) => {
       res.json({
         success: true,
         error: false,
-        payload: docs
+        payload: doc
       });
     }
   })

@@ -26,10 +26,10 @@ const routes: Array<RouteConfig> = [
     component: PatientRegister
   },
   {
-    path: "/patient/:patientNumber",
+    path: "/patient/:patientId",
     name: "Patient",
     component: Patient,
-    props: route => ({ patientNumber: route.query.patientNumber })
+    props: route => ({ patientId: route.query.patientId })
   },
   {
     path: "/crfs",
@@ -52,6 +52,11 @@ const routes: Array<RouteConfig> = [
     path: "/CRF/:crfId/:section",
     name: "CRF",
     component: () => import(/* webpackChunkName: "about" */ "../views/CRF.vue")
+  },
+  {
+    path: "/CRF/:crfId/data/:patientId",
+    name: "CRFData",
+    component: () => import(/* webpackChunkName: "about" */ "../views/CRFData.vue")
   },
   {
     path: "/about",

@@ -6,7 +6,7 @@
         <label :for="options.name">{{ options.label }}:</label>
       </b-col>
       <b-col sm="9">
-        <b-form-input @change="changed()" v-model="localValue" :id="options.name" :type="options.validationType" :placeholder="options.defaultValue"></b-form-input>
+        <b-form-input v-model="localValue" :id="options.name" :type="options.validationType" :placeholder="options.defaultValue"></b-form-input>
       </b-col>
     </b-row>
   </b-container>
@@ -17,22 +17,12 @@
 export default {
   name: "TextField",
   props: ["options", "value"],
-  created() {
-    if(!this.value) {
-      this.localValue = this.options.defaultValue;
-    } else {
-      this.localValue = this.value;
+  computed: {
+    localValue: {
+      get() {
+        return this.value ? this.value.value : this.options.defaultValue},
+      set(newValue) { this.$emit('changed', newValue)}
     }
-  },
-  data() {
-    return {
-      localValue: null
-    }
-  },
-  methods:{
-    changed() {
-      this.$emit('changed', this.localValue);
-    },
   }
 };
 </script>

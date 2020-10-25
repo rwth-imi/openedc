@@ -7,7 +7,6 @@
         </b-col>
         <b-col sm="9">
           <b-form-select
-            @change="changed()"          
             :id="options.name"
             v-model="localValue"
             :options="options.choices"
@@ -25,22 +24,12 @@
 export default {
   name: "SingleSelectField",
   props: ["options", "value"],
-  created() {
-    if(!this.value) {
-      this.localValue = this.options.defaultValue;
-    } else {
-      this.localValue = this.value;
+  computed: {
+    localValue: {
+      get() {
+        return this.value ? this.value.value : this.options.defaultValue},
+      set(newValue) { this.$emit('changed', newValue)}
     }
   },
-  data() {
-    return {
-      localValue: null
-    }
-  },
-  methods:{
-    changed() {
-      this.$emit('changed', this.localValue);
-    },
-  }
 };
 </script>

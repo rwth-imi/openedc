@@ -41,7 +41,7 @@ export default {
 
   actions: {
     GET_CRFS(context) {
-      Vue.axios.get('/crf/')
+      return Vue.axios.get('/crf/')
         .then(payload => {
           context.commit("SET_CRFS", payload.data.payload);
         })

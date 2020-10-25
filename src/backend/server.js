@@ -6,6 +6,7 @@ var cors = require('cors')
 
 const patient = require("./routes/patient.js");
 const crf = require("./routes/crf.js");
+const crf_data = require("./routes/crf_data.js");
 
 const app = express();
 app.use(bodyParser.json());
@@ -22,30 +23,15 @@ app.use(function(req, res, next) {
 app.use(cors())
 
 
-// NeDB
-const Datastore = require('nedb');
-
-const db = {};
-db.data = new Datastore({
-  filename: 'db/data.db',
-  autoload: true
-});
-
-
-
-
-
 // Routes
 app.get("/", function(req, res) {
   res.send("Hello World!");
 });
 
-const route = express.Router();
-
-
-app.use(route)
+app.use('/', crf_data)
 app.use('/', patient)
 app.use('/', crf)
+
 
 
 

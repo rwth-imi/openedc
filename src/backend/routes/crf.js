@@ -3,6 +3,8 @@ const router = express.Router();
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+const db = require('./stores.js');
+const utils = require("./utils.js")
 // File Upload
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
@@ -14,14 +16,6 @@ const storage = multer.diskStorage({
 })
 const upload = multer({
   storage: storage
-});
-
-// NeDB
-const Datastore = require('nedb');
-const db = {};
-db.crfs = new Datastore({
-  filename: 'db/crfs.db',
-  autoload: true
 });
 
 function saveNewCRF(crf, errorCB, successCB) {
@@ -41,7 +35,6 @@ function saveNewCRF(crf, errorCB, successCB) {
 }
 
 function saveEditCRF(crfId, crf, errorCB, successCB) {
-  console.log('saveEdit')
   db.crfs.findOne({
     "_id": crfId
   }, (err, doc) => {
@@ -59,7 +52,6 @@ function saveEditCRF(crfId, crf, errorCB, successCB) {
         } else {
           db.crfs.update({
             $where: function() {
-              console.log(this)
               return this.newestVersion == crfId || this._id == crfId;
             }
           }, {
@@ -70,7 +62,6 @@ function saveEditCRF(crfId, crf, errorCB, successCB) {
             multi: true,
             returnUpdatedDocs: true
           }, (err, numReplaced, affectedDocuments) => {
-            console.log(numReplaced, affectedDocuments)
             if (err) {
               console.log('error', err)
               errorCB(err)
@@ -169,11 +160,7 @@ router.put('/api/crf/:crfId', (req, res, next) => {
 })
 
 router.get('/api/crf/', (req, res, next) => {
-  db.crfs.find({
-    $where: function() {
-      return this.newestVersion === null || this._id === this.newestVersion;
-    }
-  }, (err, docs) => {
+  utils.getAllCRFs((err, docs) => {
     if (err) {
       console.log('error', err)
       res.json({

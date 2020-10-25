@@ -1,13 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-// NeDB
-const Datastore = require('nedb');
-const db = {};
-db.patients = new Datastore({
-  filename: 'db/patients.db',
-  autoload: true
-});
+const db = require('./stores.js');
 
 router.post('/api/patient/', (req, res, next) => {
   db.patients.insert(req.body.patient, (err, inserted) => {
@@ -28,7 +22,6 @@ router.post('/api/patient/', (req, res, next) => {
            multi: false,
            returnUpdatedDocs: true
          }, function(err, numReplaced, affectedDocuments) {
-           console.log('affectedDocuments', affectedDocuments)
           if (err) {
             console.log('error', err)
             res.json({

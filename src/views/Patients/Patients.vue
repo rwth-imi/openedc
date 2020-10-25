@@ -24,7 +24,7 @@
         >
       </template>
       <template v-slot:cell(birth)="data">
-        {{ (new Date(data.value)).toDateString() }}
+        {{ (new Date(data.value)) | formatDate }}
       </template>
       <template v-slot:cell(crfs)="data">
         <div v-for="index in data.value" :key="index">

@@ -18,7 +18,7 @@
         >
       </template>
       <template v-slot:cell(createdAt)="data">
-        {{ (new Date(data.value)).toDateString() }}
+        {{ (new Date(data.value)) | formatDate }}
       </template>
       <template v-slot:cell(settings)="data">
         <b-button pill variant="outline-success" :to="{ name: 'EditCRF', params: {crfId: data.item._id }}">Edit</b-button>

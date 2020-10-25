@@ -11,6 +11,14 @@ import i18n from "./i18n";
 
 Vue.config.productionTip = false;
 
+import moment from 'moment'
+
+Vue.filter('formatDate', function(value) {
+  if (value) {
+    return moment(value).format('YYYY/MM/DD')
+  }
+});
+
 new Vue({
   router,
   store,

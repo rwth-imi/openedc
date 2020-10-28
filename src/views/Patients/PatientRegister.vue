@@ -13,20 +13,11 @@
         >
           <b-form-group
             label-cols-sm="3"
-            label="Firstname:"
+            label="Patient ID:"
             label-align-sm="right"
-            label-for="nested-firstname"
+            label-for="nested-patientId"
           >
-            <b-form-input id="nested-firstname" v-model="patient.firstName"></b-form-input>
-          </b-form-group>
-
-          <b-form-group
-            label-cols-sm="3"
-            label="Lastname:"
-            label-align-sm="right"
-            label-for="nested-lastname"
-          >
-            <b-form-input id="nested-lastname" v-model="patient.lastName"></b-form-input>
+            <b-form-input id="nested-patientId" v-model="patient.patientId"></b-form-input>
           </b-form-group>
 
           <b-form-group
@@ -59,7 +50,6 @@
         <b-button type="reset" variant="danger">Reset</b-button>
       </b-form>
       </b-card>
-      {{ patient}}
     </div>
   </div>
 </template>
@@ -71,8 +61,6 @@ export default {
   data() {
     return {
       patient: {
-        firstName: "",
-        lastName: "",
         sex: "none",
         birth: null
       }
@@ -86,6 +74,7 @@ export default {
       })
         .then((data) => {
           console.log('response', data)
+          this.$router.push({name: 'Patients'})
         })
     },
     onReset(evt) {

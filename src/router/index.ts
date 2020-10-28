@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from "vue-router";
 import Home from "../views/Home.vue";
 import Patients from "../views/Patients/Patients.vue";
 import PatientRegister from "../views/Patients/PatientRegister.vue";
+import PatientEdit from "../views/Patients/PatientEdit.vue";
 import Patient from "../views/Patients/Patient.vue";
 import CRFs from "../views/CRFsOverview.vue";
 import Test from "../views/Test.vue";
@@ -30,6 +31,11 @@ const routes: Array<RouteConfig> = [
     name: "Patient",
     component: Patient,
     props: route => ({ patientId: route.query.patientId })
+  },
+  {
+    path: "/patient/edit/:patientId",
+    name: "PatientEdit",
+    component: PatientEdit
   },
   {
     path: "/crfs",

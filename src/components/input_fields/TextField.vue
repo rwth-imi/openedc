@@ -5,8 +5,11 @@
       <b-col sm="3">
         <label :for="options.name">{{ options.label }}:</label>
       </b-col>
-      <b-col sm="9">
+      <b-col sm="6">
         <b-form-input v-model="localValue" :id="options.name" :type="options.validationType" :placeholder="options.defaultValue"></b-form-input>
+      </b-col>
+      <b-col sm="3">
+        {{ options.notes }}
       </b-col>
     </b-row>
   </b-container>

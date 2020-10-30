@@ -5,7 +5,7 @@
         <b-col sm="3">
           <label for="textarea-default">{{ options.label }}</label>
         </b-col>
-        <b-col sm="6">
+        <b-col sm="5">
           <b-form-group>
             <b-form-radio-group
               :id="options.name"
@@ -17,8 +17,11 @@
             ></b-form-radio-group>
           </b-form-group>
         </b-col>
-        <b-col sm="3">
+        <b-col sm="1">
           <b-button type="reset" variant="danger" @click="resetRadio()">Reset</b-button>
+        </b-col>
+        <b-col sm="3">
+          {{ options.notes }}
         </b-col>
       </b-row>
     </b-container>

@@ -5,12 +5,15 @@
         <b-col sm="3">
           <label for="textarea-default">{{ options.label }}</label>
         </b-col>
-        <b-col sm="9">
+        <b-col sm="6">
           <b-form-textarea
             v-model="localValue"
             :id="options.name"
             :placeholder="options.defaultValue"
           ></b-form-textarea>
+        </b-col>
+        <b-col sm="3">
+          {{ options.notes }}
         </b-col>
       </b-row>
     </b-container>

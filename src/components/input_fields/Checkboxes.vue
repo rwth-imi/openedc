@@ -5,7 +5,7 @@
         <b-col sm="3">
           <label :for="options.name">{{ options.label }}:</label>
         </b-col>
-        <b-col sm="9">
+        <b-col sm="6">
           <b-form-group>
             <b-form-checkbox-group
               :id="options.name"
@@ -13,10 +13,9 @@
               :options="options.choices"
             ></b-form-checkbox-group>
           </b-form-group>
-
-          <div>
-            Selected: <strong>{{ localValue }}</strong>
-          </div>
+          <b-col sm="3">
+            {{ options.notes }}
+          </b-col>
         </b-col>
       </b-row>
     </b-container>

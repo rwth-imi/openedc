@@ -6,7 +6,9 @@
       </b-col>
       <b-col sm="10" class="mainPage"
       v-if="show">
-        <b-button type="submit" variant="primary" @click="submit">Submit</b-button>
+        <div class="actionBar">
+          <b-button type="submit" variant="primary" @click="submit">Submit</b-button>
+        </div>
         <PatientDisplay
           :patientId="patientId"
           :date="data.record"
@@ -106,7 +108,7 @@ export default {
       });
     },
     changed(section, index, name, changedValue) {
-      if(!this.data[name]) this.data[name] = {}
+      if(!this.data[name]) this.data[name] = {};
       this.data[name].value = changedValue;
       section.items[index].value = changedValue;
     },
@@ -120,7 +122,6 @@ export default {
           console.log('updated!')
         })
       }
-
     }
   },
   watch: {
@@ -145,5 +146,12 @@ h3 {
 
 .sidebarCRFs a {
   color: #385723 !;
+}
+
+.mainPage {
+  text-align: left;
+}
+.actionBar {
+  text-align: right;
 }
 </style>

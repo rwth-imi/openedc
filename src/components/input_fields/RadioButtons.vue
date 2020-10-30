@@ -5,19 +5,20 @@
         <b-col sm="3">
           <label for="textarea-default">{{ options.label }}</label>
         </b-col>
-        <b-col sm="9">
+        <b-col sm="6">
           <b-form-group>
             <b-form-radio-group
               :id="options.name"
               v-model="localValue"
               :options="options.choices"
               name="radio-options"
+              @change="changeRadio()"
+              stacked
             ></b-form-radio-group>
           </b-form-group>
-
-          <div class="mt-3">
-            Selected: <strong>{{ localValue }}</strong>
-          </div>
+        </b-col>
+        <b-col sm="3">
+          <b-button type="reset" variant="danger" @click="resetRadio()">Reset</b-button>
         </b-col>
       </b-row>
     </b-container>
@@ -27,12 +28,26 @@
 <script>
 export default {
   props: ["options", "value"],
-  computed: {
-    localValue: {
-      get() {
-        return this.value ? this.value.value : this.options.defaultValue},
-      set(newValue) { this.$emit('changed', newValue)}
+  data() {
+    return {
+      localValue: null
     }
   },
+  created() {
+    this.localValue = this.value ? this.value.value : this.options.defaultValue;
+  },
+  methods: {
+    resetRadio() {
+      this.localValue = false;
+    },
+    changeRadio() {
+      this.$emit('changed', this.localValue)
+    }
+  },
+  watch: {
+    value: function () {
+      this.localValue = this.value;
+    }
+  }
 };
 </script>

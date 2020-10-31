@@ -12,7 +12,7 @@
               v-model="localValue"
               :options="options.choices"
               name="radio-options"
-              @change="changeRadio()"
+              @change.native="changeRadio()"
               stacked
             ></b-form-radio-group>
           </b-form-group>
@@ -42,14 +42,15 @@ export default {
   methods: {
     resetRadio() {
       this.localValue = false;
+      this.$emit('changed', this.localValue)
     },
-    changeRadio() {
+    changeRadio(value) {
       this.$emit('changed', this.localValue)
     }
   },
   watch: {
     value: function () {
-      this.localValue = this.value;
+      this.localValue = this.value.value;
     }
   }
 };

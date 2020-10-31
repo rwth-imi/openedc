@@ -31,7 +31,9 @@
         </b-collapse>
       </b-navbar>
     </div>
-    <router-view />
+    <div id="main">
+      <router-view />
+    </div>
   </div>
 </template>
 <script>
@@ -62,6 +64,13 @@ export default {
   color: #2c3e50;
 }
 
+#nav {
+  position: fixed;
+  width: 100%;
+  top: 0px;
+  z-index: 1;
+}
+
 #nav a {
   font-weight: bold;
   color: #385723;
@@ -71,7 +80,8 @@ export default {
   color: #e2f0d9;
 }
 
-.mainPage {
-  padding: 30px 0 0 0;
+#main {
+  z-index: 0;
+  margin-top: 58px;
 }
 </style>

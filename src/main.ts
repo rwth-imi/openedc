@@ -9,9 +9,21 @@ import router from "./router";
 import store from "./store";
 import i18n from "./i18n";
 
+
 Vue.config.productionTip = false;
 
 import moment from 'moment'
+
+import VueSidebarMenu from 'vue-sidebar-menu'
+import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCaretDown, faArrowsAltH, faClipboardList, faUserInjured} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+library.add(faCaretDown, faArrowsAltH, faClipboardList, faUserInjured)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.use(VueSidebarMenu)
 
 Vue.filter('formatDate', function(value) {
   if (value) {

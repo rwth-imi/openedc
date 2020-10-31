@@ -20,7 +20,7 @@ export default {
       // test if game is already in games
       let inserted = false;
       state.crfs.forEach(function(e, i, a) {
-        if (e.crfId === crf._id) {
+        if (e._id === crf._id) {
           Vue.set(a, i, crf); // reactivity
           inserted = true;
         }
@@ -31,7 +31,7 @@ export default {
       state.crf = crf;
     },
     DELETE_CRF(state, crfId) {
-      state.crfs.forEach(function(e, i, a) {
+      state.crfs.forEach(function(e, i) {
         if (e.crfId === crfId) {
           state.crfs.splice(i, 1);
         }

@@ -13,7 +13,7 @@
           ></b-form-select>
         </b-col>
         <b-col sm="3">
-          {{ options.notes }} {{ localValue }} {{ value }}
+          {{ options.notes }}
         </b-col>
       </b-row>
     </b-container>

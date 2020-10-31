@@ -3,7 +3,7 @@
     <b-container fluid>
       <b-row class="mt-1">
         <b-col sm="3">
-          <label for="textarea-default">{{ options.label }}</label>
+          <label :for="options.name">{{ options.label }}</label>
         </b-col>
         <b-col sm="5">
           <b-form-group>
@@ -50,7 +50,11 @@ export default {
   },
   watch: {
     value: function () {
-      this.localValue = this.value.value;
+      if(this.value && this.value.value) {
+        this.localValue = this.value.value;
+      } else {
+        this.localValue = this.options.defaultValue;
+      }
     }
   }
 };

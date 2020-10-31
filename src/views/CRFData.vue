@@ -23,11 +23,29 @@
             >Submit
           </b-button>
         </div>
-        <PatientDisplay
-          :patientId="patientId"
-          :date="data.record"
-          :dates="dates"
-        ></PatientDisplay>
+        <b-row>
+          <b-col sm="3">
+            <label :for="'recordSelect'">Record:</label>
+          </b-col>
+          <b-col sm="6">
+            <b-form-select
+              id="recordSelect"
+              v-model="record"
+              :options="records"
+              class="mb-3"
+              @change="changeRecord()"
+            >
+              <!-- This slot appears above the options from 'options' prop -->
+              <template v-slot:first>
+                <b-form-select-option :value="null" disabled
+                  >-- Please select a record --</b-form-select-option
+                >
+              </template>
+              <!-- These options will appear after the ones from 'options' prop -->
+              <b-form-select-option value="new">New</b-form-select-option>
+            </b-form-select>
+          </b-col>
+        </b-row>
 
         <h1>CRF: {{ crf.name }}</h1>
         <div v-if="section === null">
@@ -111,12 +129,13 @@ export default {
       dates: ["Wed Sep 30 2020", "Thu Sep 17 2020", "Tue Sep 1 2020"],
       show: false,
       data: {
-        "record": "test",
-        "study_id": "test" // TODO: No Idea why, but this has to be included!
+        record: "test1"
       },
       new: true,
       crfData: [],
-      collapsed: false
+      collapsed: false,
+      records: [],
+      record: "new"
     };
   },
   computed: {
@@ -130,6 +149,11 @@ export default {
         },
         {
           title: "Number: " + this.patientId,
+          href: {
+            name: "Patient",
+            query: { patientId: this.patientId },
+            params: { patientId: this.patientId }
+          },
           icon: {
             element: "font-awesome-icon",
             attributes: {
@@ -186,7 +210,11 @@ export default {
   },
   created() {
     this.patientId = this.$route.params.patientId;
-    this.fetchData(this.$route.params.crfId, this.patientId).then(() => {
+    this.fetchData(
+      this.$route.params.crfId,
+      this.patientId,
+      this.$route.params.crfDataId
+    ).then(() => {
       this.createDataSections();
       this.$store.dispatch("crfs/GET_CRFS");
       this.show = true;
@@ -198,24 +226,47 @@ export default {
       });
   },
   methods: {
-    fetchData(crfId, patientId) {
+    fetchData(crfId, patientId, crfDataId) {
       return this.$store.dispatch("crfs/GET_CRF", crfId).then(() => {
         if (this.$route.params.new) {
           this.new = true;
         } else {
           this.new = false;
-          //this.$store.dispatch("crfs/GET_DATA", crfId, number, )
           this.$axios
-            .get(
-              `/data/patient/${this.patientId}/crf/${this.$route.params.crfId}`
-            )
+            .get(`/data/patient/${this.patientId}/crf/${crfId}/records`)
             .then(payload => {
-              payload.data.payload.data.forEach((item, i) => {
-                this.data[item.field] = {};
-                this.data[item.field].value = item.value;
-                this.data[item.field]._id = item._id;
+              this.records = [];
+              payload.data.payload.forEach(rec => {
+                const date = this.$options.filters.formatDatetime(rec.date);
+                this.records.push({
+                  value: rec.id,
+                  text: date
+                });
               });
             });
+          if (crfDataId) {
+            this.record = crfDataId;
+            this.$axios
+              .get(`/data/patient/${this.patientId}/crfData/${crfDataId}`)
+              .then(payload => {
+                payload.data.payload.data.forEach(item => {
+                  this.data[item.field] = {};
+                  this.data[item.field].value = item.value;
+                  this.data[item.field]._id = item._id;
+                });
+              });
+          } else {
+            this.$axios
+              .get(`/data/patient/${this.patientId}/crf/${crfId}`)
+              .then(payload => {
+                this.record = payload.data.payload.crfDataId;
+                payload.data.payload.data.forEach((item, i) => {
+                  this.data[item.field] = {};
+                  this.data[item.field].value = item.value;
+                  this.data[item.field]._id = item._id;
+                });
+              });
+          }
         }
       });
     },
@@ -255,12 +306,28 @@ export default {
       } else {
         this.$axios
           .put(
-            `/data/patient/${this.patientId}/crf/${this.$route.params.crfId}/full`,
+            `/data/patient/${this.patientId}/crf/${this.$route.params.crfDataId}/full`,
             { data: this.data }
           )
           .then(() => {
             console.log("updated!");
           });
+      }
+    },
+    refetch(crfId, patientId, crfDataId) {
+      this.show = false;
+      this.fetchData(crfId, patientId, crfDataId).then(() => {
+        this.show = true;
+      });
+    },
+    changeRecord() {
+      if(this.record !== 'new') {
+        this.refetch(this.crf._id, this.patientId, this.record)
+      } else {
+        this.new = true;
+        this.data = {
+          record: "test1"
+        }
       }
     }
   },
@@ -270,10 +337,7 @@ export default {
       this.section =
         this.$route.params.section >= 0 ? this.$route.params.section : null;
       this.patientId = this.$route.params.patientId;
-
-      this.fetchData(this.$route.params.crfId, this.patientId).then(() => {
-        this.show = true;
-      });
+      this.refetch(this.$route.params.crfId, this.patientId, this.$route.params.crfDataId);
     }
   }
 };
@@ -312,7 +376,7 @@ h3 {
 }
 
 .sidebarCRFs a {
-  color: #385723 !;
+  color: #385723 !important;
 }
 
 .mainPage {

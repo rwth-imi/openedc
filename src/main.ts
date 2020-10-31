@@ -31,6 +31,12 @@ Vue.filter('formatDate', function(value) {
   }
 });
 
+Vue.filter('formatDatetime', function(value) {
+  if (value) {
+    return moment(value).format('YYYY/MM/DD hh:mm')
+  }
+});
+
 new Vue({
   router,
   store,

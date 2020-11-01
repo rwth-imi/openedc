@@ -177,8 +177,9 @@ export default {
               params: {
                 patientId: this.patientId,
                 crfId: crfItem._id,
-                new: true,
-                section: index
+                new: this.new,
+                section: index,
+                crfDataId: this.record
               },
               hash: `${sectionItem.name}`
             }
@@ -210,6 +211,7 @@ export default {
   },
   created() {
     this.patientId = this.$route.params.patientId;
+    this.new = this.$route.params.new;
     this.fetchData(
       this.$route.params.crfId,
       this.patientId,
@@ -226,28 +228,32 @@ export default {
       });
   },
   methods: {
+    resetData() {
+      this.data = {
+        record: "test1"
+      };
+      this.record = "new";
+    },
     fetchData(crfId, patientId, crfDataId) {
       return this.$store.dispatch("crfs/GET_CRF", crfId).then(() => {
-        if (this.$route.params.new) {
-          this.new = true;
-        } else {
-          this.new = false;
-          this.$axios
-            .get(`/data/patient/${this.patientId}/crf/${crfId}/records`)
-            .then(payload => {
-              this.records = [];
-              payload.data.payload.forEach(rec => {
-                const date = this.$options.filters.formatDatetime(rec.date);
-                this.records.push({
-                  value: rec.id,
-                  text: date
-                });
+        this.$axios
+          .get(`/data/patient/${patientId}/crf/${crfId}/records`)
+          .then(payload => {
+            this.records = [];
+            payload.data.payload.forEach(rec => {
+              const date = this.$options.filters.formatDatetime(rec.date);
+              this.records.push({
+                value: rec.id,
+                text: date
               });
             });
+          });
+        this.resetData();
+        if (!this.new) {
           if (crfDataId) {
             this.record = crfDataId;
             this.$axios
-              .get(`/data/patient/${this.patientId}/crfData/${crfDataId}`)
+              .get(`/data/patient/${patientId}/crfData/${crfDataId}`)
               .then(payload => {
                 payload.data.payload.data.forEach(item => {
                   this.data[item.field] = {};
@@ -257,7 +263,7 @@ export default {
               });
           } else {
             this.$axios
-              .get(`/data/patient/${this.patientId}/crf/${crfId}`)
+              .get(`/data/patient/${patientId}/crf/${crfId}`)
               .then(payload => {
                 this.record = payload.data.payload.crfDataId;
                 payload.data.payload.data.forEach((item, i) => {
@@ -265,6 +271,9 @@ export default {
                   this.data[item.field].value = item.value;
                   this.data[item.field]._id = item._id;
                 });
+              })
+              .catch(() => {
+                this.new = true;
               });
           }
         }
@@ -316,28 +325,33 @@ export default {
     },
     refetch(crfId, patientId, crfDataId) {
       this.show = false;
-      this.fetchData(crfId, patientId, crfDataId).then(() => {
+      return this.fetchData(crfId, patientId, crfDataId).then(() => {
         this.show = true;
       });
     },
     changeRecord() {
-      if(this.record !== 'new') {
-        this.refetch(this.crf._id, this.patientId, this.record)
+      if (this.record !== "new") {
+        this.new = false;
+        this.refetch(this.crf._id, this.patientId, this.record);
       } else {
         this.new = true;
         this.data = {
           record: "test1"
-        }
+        };
       }
     }
   },
   watch: {
     $route(to, from) {
+      let crfDataId = this.$route.params.crfDataId;
+      if (to.params.crfId === from.params.crfId) {
+        crfDataId = this.record;
+      }
       this.show = false;
       this.section =
         this.$route.params.section >= 0 ? this.$route.params.section : null;
       this.patientId = this.$route.params.patientId;
-      this.refetch(this.$route.params.crfId, this.patientId, this.$route.params.crfDataId);
+      this.refetch(this.$route.params.crfId, this.patientId, crfDataId);
     }
   }
 };

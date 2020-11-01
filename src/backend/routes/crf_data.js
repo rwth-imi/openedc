@@ -291,6 +291,12 @@ router.get("/api/data/patient/:patientId/crf/:crfId", (req, res) => {
                           }
                         }
                       );
+                    } else {
+                      res.status(404).json({
+                        success: false,
+                        error: err,
+                        payload: null
+                      });
                     }
                   });
               }

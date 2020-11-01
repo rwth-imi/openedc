@@ -25,16 +25,22 @@ export default {
   name: "SingleSelectField",
   props: ["options", "value"],
   created() {
-    if(!this.options.choices.some(e => e.value === null)){
-      this.options.choices.push({ value: null, text: 'Please select an option' });
+    if (!this.options.choices.some(e => e.value === null)) {
+      this.options.choices.push({
+        value: null,
+        text: "Please select an option"
+      });
     }
   },
   computed: {
     localValue: {
       get() {
-        return this.value ? this.value.value : this.options.defaultValue},
-      set(newValue) { console.log('jo', newValue);this.$emit('changed', newValue)}
+        return this.value ? this.value.value : this.options.defaultValue;
+      },
+      set(newValue) {
+        this.$emit("changed", newValue);
+      }
     }
-  },
+  }
 };
 </script>

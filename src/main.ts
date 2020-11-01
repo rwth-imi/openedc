@@ -16,6 +16,7 @@ import moment from 'moment'
 
 import VueSidebarMenu from 'vue-sidebar-menu'
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
+import './styles.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCaretDown, faArrowsAltH, faClipboardList, faUserInjured} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'

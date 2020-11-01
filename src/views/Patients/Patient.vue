@@ -17,11 +17,12 @@
       {{ getStatus(data.item._id) }}
     </template>
     <template v-slot:cell(settings)="data">
-      <b-button v-if="filled(data.item._id)" pill variant="outline-success" :to="{name:'CRFData', params: { patientId: patientId, crfId: data.item._id, new: true }}">New Record</b-button>
-      <b-button v-if="filled(data.item._id)" pill variant="outline-success" :to="{name:'CRFData', params: { patientId: patientId, crfId: data.item._id, new: false }}">Edit</b-button>
-      <b-button v-else pill variant="outline-success" :to="{name:'CRFData', params: { patientId: patientId, crfId: data.item._id, new: true }}">Fill out</b-button>
-      <b-button pill variant="outline-success">Export</b-button>
-      <b-button pill variant="outline-danger">Delete</b-button>
+      <div class="settings">
+        <b-button v-if="filled(data.item._id)" pill variant="outline-success" :to="{name:'CRFData', params: { patientId: patientId, crfId: data.item._id, new: false }}">Edit</b-button>
+        <b-button pill variant="outline-success" :to="{name:'CRFData', params: { patientId: patientId, crfId: data.item._id, new: true }}">New Record</b-button>
+        <b-button pill variant="outline-success">Export</b-button>
+        <b-button pill variant="outline-danger">Delete</b-button>
+      </div>
     </template>
   </b-table>
 </div>
@@ -70,6 +71,11 @@ export default {
     },
     filled(id) {
       return this.crfData.some(elem => (elem.newestCRF === id || elem.crfId === id))
+    },
+    getCRFDataId(crfId) {
+      return this.crfData.find(crfDataObj => {
+        return crfDataObj.crfId === crfId || crfDataObj.newestCRF === crfId;
+      })._id;
     }
   },
   computed: {
@@ -84,4 +90,9 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.settings {
+  float: right;
+}
+
+</style>

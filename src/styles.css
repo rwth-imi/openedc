@@ -1,0 +1,39 @@
+.v-sidebar-menu.vsm_white-theme.vsm_expanded .vsm--item_open .vsm--link_level-1 {
+    color: #fff;
+    background-color: #a9d18e ;
+}
+
+.v-sidebar-menu.vsm_white-theme.vsm_expanded .vsm--item_open .vsm--link_level-1.vsm--link.vsm--link_active {
+    color: #fff;
+    background-color: #385723 ;
+}
+
+.v-sidebar-menu.vsm_white-theme .vsm--mobile-bg, .v-sidebar-menu.vsm_white-theme.vsm_collapsed .vsm--link_level-1.vsm--link_hover .vsm--icon, .v-sidebar-menu.vsm_white-theme.vsm_collapsed .vsm--link_level-1:hover .vsm--icon, .v-sidebar-menu.vsm_white-theme .vsm--link_level-1.vsm--link_hover, .v-sidebar-menu.vsm_white-theme .vsm--link_level-1.vsm--link:hover, .v-sidebar-menu.vsm_white-theme .vsm--link_level-1.vsm--link:hover .vsm--icon{
+    color: #fff;
+    background-color: #385723 !important;
+}
+
+.v-sidebar-menu.vsm_white-theme.vsm_expanded .vsm--item_open .vsm--link_level-1 .vsm--icon {
+    color: #fff;
+    background-color: #a9d18e;
+}
+
+.v-sidebar-menu.vsm_white-theme.vsm_expanded .vsm--link_level-1 .vsm--icon {
+    background-color: white;
+    color: black;
+}
+
+.v-sidebar-menu.vsm_white-theme .vsm--link_level-1 .vsm--icon {
+    background-color: white;
+    color: #a9d18e;
+}
+
+.v-sidebar-menu.vsm_white-theme .vsm--link_level-1.vsm--link_active .vsm--icon {
+    background-color: white;
+    color: #385723;
+}
+
+.v-sidebar-menu.vsm_white-theme.vsm_expanded .vsm--item_open .vsm--link_level-1.vsm--link.vsm--link_active .vsm--icon {
+    color: #fff;
+    background-color: #385723;
+}

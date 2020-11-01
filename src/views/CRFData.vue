@@ -13,37 +13,33 @@
       <span slot="dropdown-icon"><font-awesome-icon icon="caret-down"/></span>
     </sidebar-menu>
     <div id="sidebarpage" :class="[{ collapsed: collapsed }]">
-      <!--<b-col sm="2" class="sidebarCRFs">
-        &lt;!&ndash;        <SidebarCRFs :crf="crf"></SidebarCRFs>&ndash;&gt;
-
-      </b-col>-->
       <b-col sm="12" class="mainPage" v-if="show">
-        <div class="actionBar">
-          <b-button type="submit" variant="primary" @click="submit"
-            >Submit
-          </b-button>
-        </div>
-        <b-row>
+        <b-row class="actionBar">
           <b-col sm="3">
             <label :for="'recordSelect'">Record:</label>
           </b-col>
-          <b-col sm="6">
+          <b-col sm="3">
             <b-form-select
-              id="recordSelect"
-              v-model="record"
-              :options="records"
-              class="mb-3"
-              @change="changeRecord()"
+                id="recordSelect"
+                v-model="record"
+                :options="records"
+                class="mb-3"
+                @change="changeRecord()"
             >
               <!-- This slot appears above the options from 'options' prop -->
               <template v-slot:first>
                 <b-form-select-option :value="null" disabled
-                  >-- Please select a record --</b-form-select-option
+                >-- Please select a record --</b-form-select-option
                 >
               </template>
               <!-- These options will appear after the ones from 'options' prop -->
               <b-form-select-option value="new">New</b-form-select-option>
             </b-form-select>
+          </b-col>
+          <b-col sm="6" class="actions">
+            <b-button type="submit" variant="primary" @click="submit"
+            >Save
+            </b-button>
           </b-col>
         </b-row>
 
@@ -398,6 +394,19 @@ h3 {
 }
 
 .actionBar {
+  background-color: #e3e3e3;
+  color: black;
+  font-size: 20px;
+  padding: 20px 20px 15px 20px;
+}
+
+.actionBar .actions{
   text-align: right;
+}
+
+.actionBar .actions button {
+  background-color: #385723;
+  color: white;
+  border-color: #385723;
 }
 </style>

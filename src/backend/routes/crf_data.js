@@ -142,6 +142,7 @@ router.get("/api/data/patient/:patientId/crfs", (req, res) => {
               payload: null
             });
           } else {
+            // get for all patient crfs the newest Version
             docs.forEach(crfData => {
               crfData.newestCRF = crfs.find(
                 elem => elem._id === crfData.crfId
@@ -163,7 +164,6 @@ router.get("/api/data/patient/:patientId/crfs", (req, res) => {
 router.get("/api/data/patient/:patientId/crf/:crfId/records", (req, res) => {
   const patientId = req.params.patientId;
   const crfId = req.params.crfId;
-
   db.crfs.findOne(
     {
       _id: crfId
@@ -178,13 +178,14 @@ router.get("/api/data/patient/:patientId/crf/:crfId/records", (req, res) => {
         });
       } else {
         const versions = [];
-        const crfIds = [crfId];
+
         let searchCrfId = null;
         if (doc.newestVersion === null) {
           searchCrfId = doc._id;
         } else {
           searchCrfId = doc.newestVersion;
         }
+        const crfIds = [searchCrfId];
         // crfId is the newest version
         db.crfs.find(
           {
@@ -205,7 +206,8 @@ router.get("/api/data/patient/:patientId/crf/:crfId/records", (req, res) => {
                 crfDataVersion.forEach(elem => {
                   resObj.push({
                     date: elem.createdAt,
-                    id: elem._id
+                    id: elem._id,
+                    crfId: elem.crfId
                   });
                 });
                 res.json({

@@ -1,6 +1,6 @@
 const db = require('./stores.js');
 
-function getAllCRFs(callback) {
+function getAllNewestCRFs(callback) {
   db.crfs.find({
     $where: function() {
       return this.newestVersion === null || this._id === this.newestVersion;
@@ -8,6 +8,11 @@ function getAllCRFs(callback) {
   }, callback)
 }
 
+function getAllCRFs(callback) {
+  db.crfs.find({}, callback)
+}
+
 module.exports = {
-  getAllCRFs
+  getAllCRFs,
+  getAllNewestCRFs
 }

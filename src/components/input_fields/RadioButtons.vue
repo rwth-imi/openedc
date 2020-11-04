@@ -50,7 +50,7 @@ export default {
   },
   watch: {
     value: function () {
-      if(this.value && this.value.value) {
+      if(this.value && (this.value.value || this.value.value === 0)) {
         this.localValue = this.value.value;
       } else {
         this.localValue = this.options.defaultValue;

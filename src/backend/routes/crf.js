@@ -166,7 +166,7 @@ router.put('/api/crf/:crfId', (req, res, next) => {
 })
 
 router.get('/api/crf/', (req, res, next) => {
-  utils.getAllCRFs((err, docs) => {
+  utils.getAllNewestCRFs((err, docs) => {
     if (err) {
       console.log('error', err)
       res.json({

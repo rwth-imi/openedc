@@ -16,17 +16,18 @@ export default {
     SET_CRFS(state, crfs) {
       state.crfs = crfs;
     },
-    SET_CRF(state, crf) {
-      // test if game is already in games
-      let inserted = false;
-      state.crfs.forEach(function(e, i, a) {
-        if (e._id === crf._id) {
-          Vue.set(a, i, crf); // reactivity
-          inserted = true;
+    SET_CRF(state, crf, include) {
+      if(include) {
+        let inserted = false;
+        state.crfs.forEach(function(e, i, a) {
+          if (e._id === crf._id) {
+            Vue.set(a, i, crf); // reactivity
+            inserted = true;
+          }
+        });
+        if (!inserted) {
+          state.crfs.push(crf);
         }
-      });
-      if (!inserted) {
-        state.crfs.push(crf);
       }
       state.crf = crf;
     },
@@ -47,10 +48,10 @@ export default {
         })
         .catch(error => console.log(error))
     },
-    GET_CRF(context, crfId) {
+    GET_CRF(context, crfId, include = true) {
       return Vue.axios.get('/crf/' + crfId)
         .then(payload => {
-          context.commit("SET_CRF", payload.data.payload)
+          context.commit("SET_CRF", payload.data.payload, include)
         })
         .catch(error => console.log(error))
     },

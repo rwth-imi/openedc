@@ -1,37 +1,56 @@
 <template>
-<div class="mainPage">
-  <h1>Patient: {{ patientId }}</h1>
-  <b-row class="my-1">
-    <b-col sm="2">
-      <label for="input-small">Search:</label>
-    </b-col>
-    <b-col sm="10">
-      <b-form-input v-model="search" size="sm" placeholder="Search CRF by name"></b-form-input>
-    </b-col>
-  </b-row>
-  <b-table striped hover :items="filteredList" :fields="fields">
-    <template v-slot:cell(crf)="data">
-      {{ data.item.name }}
-    </template>
-    <template v-slot:cell(status)="data">
-      {{ getStatus(data.item._id) }}
-    </template>
-    <template v-slot:cell(settings)="data">
-      <div class="settings">
-        <b-button v-if="filled(data.item._id)" pill variant="outline-success" :to="{name:'CRFData', params: { patientId: patientId, crfId: data.item._id, new: false }}">Edit</b-button>
-        <b-button pill variant="outline-success" :to="{name:'CRFData', params: { patientId: patientId, crfId: data.item._id, new: true }}">New Record</b-button>
-        <b-button pill variant="outline-success">Export</b-button>
-        <b-button pill variant="outline-danger">Delete</b-button>
-      </div>
-    </template>
-  </b-table>
-</div>
+  <div class="mainPage">
+    <h1>Patient: {{ patientId }}</h1>
+    <b-row class="my-1">
+      <b-col sm="2">
+        <label for="input-small">Search:</label>
+      </b-col>
+      <b-col sm="10">
+        <b-form-input
+          v-model="search"
+          size="sm"
+          placeholder="Search CRF by name"
+        ></b-form-input>
+      </b-col>
+    </b-row>
+    <b-table striped hover :items="filteredList" :fields="fields">
+      <template v-slot:cell(crf)="data">
+        {{ data.item.name }}
+      </template>
+      <template v-slot:cell(status)="data">
+        {{ getStatus(data.item._id) }}
+      </template>
+      <template v-slot:cell(settings)="data">
+        <div class="settings">
+          <b-button
+            v-if="filled(data.item._id)"
+            pill
+            variant="outline-success"
+            :to="{
+              name: 'CRFData',
+              params: { patientId: patientId, crfId: data.item._id, new: false }
+            }"
+            >Edit</b-button
+          >
+          <b-button
+            pill
+            variant="outline-success"
+            :to="{
+              name: 'CRFData',
+              params: { patientId: patientId, crfId: data.item._id, new: true }
+            }"
+            >New Record</b-button
+          >
+          <b-button pill variant="outline-success">Export</b-button>
+          <b-button pill variant="outline-danger">Delete</b-button>
+        </div>
+      </template>
+    </b-table>
+  </div>
 </template>
 
 <script>
-import {
-  mapState
-} from "vuex";
+import { mapState } from "vuex";
 export default {
   name: "Patient",
   components: {},
@@ -39,7 +58,8 @@ export default {
   data() {
     return {
       search: "",
-      fields: [{
+      fields: [
+        {
           key: "crf",
           label: "CRF",
           sortable: true
@@ -57,20 +77,26 @@ export default {
   mounted() {
     this.$store.dispatch("crfs/GET_CRFS");
     this.$store.dispatch("patients/GET_PATIENT", this.patientId);
-    this.$axios.get('/data/patient/' + this.patientId + '/crfs').then((payload) => {
-      this.crfData = payload.data.payload
-    })
+    this.$axios
+      .get("/data/patient/" + this.patientId + "/crfs")
+      .then(payload => {
+        this.crfData = payload.data.payload;
+      });
   },
   methods: {
     getStatus(id) {
-      if (this.crfData.some(elem => (elem.newestCRF === id || elem.crfId === id))) {
-        return 'begonnen'
+      if (
+        this.crfData.some(elem => elem.newestCRF === id || elem.crfId === id)
+      ) {
+        return "begonnen";
       } else {
-        return 'nicht begonnen'
+        return "nicht begonnen";
       }
     },
     filled(id) {
-      return this.crfData.some(elem => (elem.newestCRF === id || elem.crfId === id))
+      return this.crfData.some(
+        elem => elem.newestCRF === id || elem.crfId === id
+      );
     },
     getCRFDataId(crfId) {
       return this.crfData.find(crfDataObj => {
@@ -90,9 +116,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.settings {
-  float: right;
-}
-
-</style>
+<style scoped></style>

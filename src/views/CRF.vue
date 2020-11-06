@@ -17,7 +17,7 @@
           v-for="subsection in crf.sections[section].subsection"
           :key="subsection.name"
         >
-          <div v-if="subsection.name != ''">
+          <div v-if="subsection.name !== ''">
             <hr />
             <h3>{{ subsection.name }}</h3>
           </div>

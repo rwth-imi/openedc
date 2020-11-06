@@ -5,31 +5,34 @@
       <b-card bg-variant="light">
         <b-form @submit="onSubmit" @reset="onReset">
           <b-form-group
-              label-cols-lg="3"
-              label="Edit Patient"
-              label-size="lg"
-              label-class="font-weight-bold pt-0"
-              class="mb-0"
+            label-cols-lg="3"
+            label="Edit Patient"
+            label-size="lg"
+            label-class="font-weight-bold pt-0"
+            class="mb-0"
           >
             <b-form-group
-                label-cols-sm="3"
-                label="Patient ID:"
-                label-align-sm="right"
-                label-for="nested-patientId"
+              label-cols-sm="3"
+              label="Patient ID:"
+              label-align-sm="right"
+              label-for="nested-patientId"
             >
-              <b-form-input id="nested-patientId" v-model="localPatient.patientId"></b-form-input>
+              <b-form-input
+                id="nested-patientId"
+                v-model="localPatient.patientId"
+              ></b-form-input>
             </b-form-group>
 
             <b-form-group
-                label-cols-sm="3"
-                label="Gender:"
-                label-align-sm="right"
-                label-for="nested-sex"
+              label-cols-sm="3"
+              label="Gender:"
+              label-align-sm="right"
+              label-for="nested-sex"
             >
               <b-form-radio-group
-                  id="radio-sex"
-                  v-model="localPatient.sex"
-                  name="radio-sub-component"
+                id="radio-sex"
+                v-model="localPatient.sex"
+                name="radio-sub-component"
               >
                 <b-form-radio value="male">Male</b-form-radio>
                 <b-form-radio value="female">Female</b-form-radio>
@@ -37,14 +40,17 @@
               </b-form-radio-group>
             </b-form-group>
             <b-form-group
-                label-cols-sm="3"
-                label="Date of Birth:"
-                label-align-sm="right"
-                label-for="birth-datepicker"
+              label-cols-sm="3"
+              label="Date of Birth:"
+              label-align-sm="right"
+              label-for="birth-datepicker"
             >
-              <b-form-datepicker id="birth-datepicker" v-model="localPatient.birth" class="mb-2"></b-form-datepicker>
+              <b-form-datepicker
+                id="birth-datepicker"
+                v-model="localPatient.birth"
+                class="mb-2"
+              ></b-form-datepicker>
             </b-form-group>
-
           </b-form-group>
           <b-button type="submit" variant="primary">Submit</b-button>
           <b-button type="reset" variant="danger">Reset</b-button>
@@ -55,7 +61,7 @@
 </template>
 
 <script>
-import {mapState} from "vuex";
+import { mapState } from "vuex";
 
 export default {
   name: "PatientEdit",
@@ -81,13 +87,14 @@ export default {
   methods: {
     onSubmit(evt) {
       evt.preventDefault();
-      this.axios.put('patient/'+this.patient._id, {
-        "patient": this.localPatient
-      })
-          .then((data) => {
-            console.log('response', data)
-            this.$router.push({name: 'Patients'})
-          })
+      this.axios
+        .put("patient/" + this.patient._id, {
+          patient: this.localPatient
+        })
+        .then(data => {
+          console.log("response", data);
+          this.$router.push({ name: "Patients" });
+        });
     },
     onReset(evt) {
       evt.preventDefault();

@@ -41,8 +41,8 @@ export default {
     ...mapState("crfs", ["crfs"]),
     filteredList() {
       return this.crfs.filter(crf => {
-        return crf._id.includes(this.search.toLowerCase())
-      })
+        return crf._id.includes(this.search.toLowerCase());
+      });
     }
   },
   data() {

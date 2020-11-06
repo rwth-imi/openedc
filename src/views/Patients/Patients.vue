@@ -10,7 +10,7 @@
       </b-col>
       <b-col sm="10">
         <b-form-input
-            id="search"
+          id="search"
           v-model="search"
           size="sm"
           placeholder="Search Patient by id"
@@ -20,12 +20,16 @@
     <b-table striped hover :items="filteredList" :fields="fields">
       <template v-slot:cell(patientId)="data">
         <router-link
-          :to="{ name: 'Patient', query: { patientId: data.value }, params: { patientId: data.value }}"
+          :to="{
+            name: 'Patient',
+            query: { patientId: data.value },
+            params: { patientId: data.value }
+          }"
           >{{ data.value }}</router-link
         >
       </template>
       <template v-slot:cell(birth)="data">
-        {{ (new Date(data.value)) | formatDate }}
+        {{ new Date(data.value) | formatDate }}
       </template>
       <template v-slot:cell(crfs)="data">
         <div v-for="index in data.value" :key="index">
@@ -46,9 +50,22 @@
         <b-icon-plus-circle></b-icon-plus-circle>
       </template>
       <template v-slot:cell(settings)="data">
-        <b-button pill variant="outline-success" :to="{name: 'PatientEdit', params: { patientId: data.item.patientId}}">Edit</b-button>
+        <b-button
+          pill
+          variant="outline-success"
+          :to="{
+            name: 'PatientEdit',
+            params: { patientId: data.item.patientId }
+          }"
+          >Edit</b-button
+        >
         <b-button pill variant="outline-success">Export</b-button>
-        <b-button pill variant="outline-danger" @click="deletePatient(data.item.patientId)">Delete</b-button>
+        <b-button
+          pill
+          variant="outline-danger"
+          @click="deletePatient(data.item.patientId)"
+          >Delete</b-button
+        >
       </template>
     </b-table>
   </div>
@@ -66,8 +83,10 @@ export default {
     ...mapState("patients", ["patients"]),
     filteredList() {
       return this.patients.filter(patient => {
-        return patient.patientId.toLowerCase().includes(this.search.toLowerCase())
-      })
+        return patient.patientId
+          .toLowerCase()
+          .includes(this.search.toLowerCase());
+      });
     }
   },
   data() {
@@ -115,12 +134,12 @@ export default {
       return this.crfs[index].id;
     },
     deletePatient(patientId) {
-      console.log('del', patientId)
+      console.log("del", patientId);
       this.$store.dispatch("patients/DESTROY_PATIENT", patientId).then(() => {
-        console.log('deleted')
+        console.log("deleted");
       });
     }
-  },
+  }
 };
 </script>
 

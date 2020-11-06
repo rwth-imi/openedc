@@ -6,7 +6,7 @@ var cors = require('cors')
 
 const patient = require("./routes/patient.js");
 const crf = require("./routes/crf.js");
-const crf_data = require("./routes/crf_data.js");
+const crf_data = require("./routes/crf_record.js");
 
 const app = express();
 app.use(bodyParser.json());

@@ -5,8 +5,8 @@ db.crfs = new Datastore({
   filename: 'db/crfs.db',
   autoload: true
 });
-db.crf_data = new Datastore({
-  filename: 'db/crf_data.db',
+db.crfRecord = new Datastore({
+  filename: 'db/crf_record.db',
   autoload: true
 });
 db.data = new Datastore({

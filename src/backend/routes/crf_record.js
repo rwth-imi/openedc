@@ -4,10 +4,10 @@ const router = express.Router();
 const db = require("./stores.js");
 const utils = require("./utils.js");
 
-function insertData(patientId, crfId, field, value, user, callback) {
+function insertData(patientId, recordId, field, value, user, callback) {
   const data = {
     patientId: patientId,
-    crfId: crfId,
+    recordId: recordId,
     field: field,
     value: value,
     nextVersion: null,
@@ -17,10 +17,10 @@ function insertData(patientId, crfId, field, value, user, callback) {
   db.data.insert(data, callback);
 }
 
-function putData(dataId, patientId, crfId, field, value, user, callback) {
+function putData(dataId, patientId, recordId, field, value, user, callback) {
   const data = {
     patientId: patientId,
-    crfId: crfId,
+    recordId: recordId,
     field: field,
     value: value,
     nextVersion: null,
@@ -50,7 +50,7 @@ function putData(dataId, patientId, crfId, field, value, user, callback) {
 }
 
 router.post("/api/data/patient/:patientId/crf/:crfId/full", (req, res) => {
-  db.crf_data.count(
+  db.crfRecord.count(
     {
       crfId: req.params.crfId,
       patientId: req.params.patientId
@@ -65,7 +65,7 @@ router.post("/api/data/patient/:patientId/crf/:crfId/full", (req, res) => {
       };
       const errors = [];
       const insertedObjects = [];
-      db.crf_data.insert(crfInfo, (err, inserted) => {
+      db.crfRecord.insert(crfInfo, (err, inserted) => {
         if (err) {
           res.json({
             success: false,
@@ -129,7 +129,7 @@ router.get("/api/data/patient/:patientId/crfs", (req, res) => {
       });
     } else {
       const patientId = req.params.patientId;
-      db.crf_data.find(
+      db.crfRecord.find(
         {
           patientId: patientId
         },
@@ -195,7 +195,7 @@ router.get("/api/data/patient/:patientId/crf/:crfId/records", (req, res) => {
             oldCrfs.forEach(oldCrf => {
               crfIds.push(oldCrf._id);
             });
-            db.crf_data.find(
+            db.crfRecord.find(
               {
                 crfId: {
                   $in: crfIds
@@ -228,7 +228,7 @@ router.get("/api/data/patient/:patientId/crf/:crfId/records", (req, res) => {
 router.get("/api/data/patient/:patientId/crf/:crfId", (req, res) => {
   const patientId = req.params.patientId;
   const crfId = req.params.crfId;
-  db.crf_data
+  db.crfRecord
     .find({
       patientId: patientId,
       crfId: crfId
@@ -258,7 +258,7 @@ router.get("/api/data/patient/:patientId/crf/:crfId", (req, res) => {
                   payload: null
                 });
               } else {
-                db.crf_data
+                db.crfRecord
                   .find({
                     $where: function() {
                       return docs.some(e => e._id === this.crfId);
@@ -271,7 +271,7 @@ router.get("/api/data/patient/:patientId/crf/:crfId", (req, res) => {
                     if (crfDataObj.length > 0) {
                       db.data.find(
                         {
-                          crfId: crfDataObj[0]._id
+                          recordId: crfDataObj[0]._id
                         },
                         (err, data) => {
                           if (err) {
@@ -307,7 +307,7 @@ router.get("/api/data/patient/:patientId/crf/:crfId", (req, res) => {
         } else {
           db.data.find(
             {
-              crfId: docs[0]._id
+              recordId: docs[0]._id
             },
             (err, data) => {
               if (err) {
@@ -335,14 +335,14 @@ router.get("/api/data/patient/:patientId/crf/:crfId", (req, res) => {
 });
 
 router.get("/api/data/patient/:patientId/crfData/:crfDataId", (req, res) => {
-  db.crf_data.findOne(
+  db.crfRecord.findOne(
     {
       _id: req.params.crfDataId
     },
     (err, doc) => {
       db.data.find(
         {
-          crfId: doc._id,
+          recordId: doc._id,
           nextVersion: null
         },
         (err, data) => {
@@ -369,61 +369,8 @@ router.get("/api/data/patient/:patientId/crfData/:crfDataId", (req, res) => {
   );
 });
 
-router.get("/api/data/patient/:patientId/crf/:crfId/:number", (req, res) => {
-  db.crf_data.findOne(
-    {
-      crfId: req.params.crfId,
-      patientId: req.params.patientId,
-      recordNumber: req.params.number
-    },
-    (err, doc) => {
-      if (err) {
-        console.log("error", err);
-        res.json({
-          success: false,
-          error: err,
-          payload: null
-        });
-      } else {
-        if (doc) {
-          db.data.find(
-            {
-              crfId: doc._id
-            },
-            (err, data) => {
-              if (err) {
-                console.log("error", err);
-                res.json({
-                  success: false,
-                  error: err,
-                  payload: null
-                });
-              } else {
-                res.json({
-                  success: true,
-                  error: false,
-                  payload: {
-                    crfId: doc.crfId,
-                    data: data
-                  }
-                });
-              }
-            }
-          );
-        } else {
-          res.json({
-            success: true,
-            error: false,
-            payload: {}
-          });
-        }
-      }
-    }
-  );
-});
-
 router.put("/api/data/patient/:patientId/crf/:crfDataId/full", (req, res) => {
-  db.crf_data.findOne(
+  db.crfRecord.findOne(
     {
       _id: req.params.crfDataId
     },
@@ -476,10 +423,10 @@ router.put("/api/data/patient/:patientId/crf/:crfDataId/full", (req, res) => {
   );
 });
 
-router.post("/api/data/patient/:patientId/crf/:crfId", (req, res) => {
+router.post("/api/data/patient/:patientId/crf/:recordId", (req, res) => {
   insertData(
     req.params.patientId,
-    req.params.crfId,
+    req.params.recordId,
     req.body.data.field,
     req.body.data.value,
     req.body.user,
@@ -519,7 +466,7 @@ router.put("/api/data/:dataId/", (req, res) => {
         putData(
           req.params.dataId,
           doc.patientId,
-          doc.crfId,
+          doc.recordId,
           req.body.data.field,
           req.body.data.value,
           req.body.user,

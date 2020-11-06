@@ -66,7 +66,7 @@ export default {
     ...mapState("patients", ["patients"]),
     filteredList() {
       return this.patients.filter(patient => {
-        return patient.patientId.includes(this.search.toLowerCase())
+        return patient.patientId.toLowerCase().includes(this.search.toLowerCase())
       })
     }
   },
@@ -88,10 +88,6 @@ export default {
           key: "birth",
           label: "Day of Birth",
           sortable: true
-        },
-        {
-          key: "crfs",
-          label: "Filled CRFs"
         },
         "Settings"
       ],

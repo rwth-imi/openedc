@@ -31,9 +31,9 @@ export default {
       }
       state.crf = crf;
     },
-    DELETE_CRF(state, crfId) {
+    DELETE_CRF(state, formsId) {
       state.crfs.forEach(function(e, i) {
-        if (e.crfId === crfId) {
+        if (e.formsId === formsId) {
           state.crfs.splice(i, 1);
         }
       });
@@ -55,15 +55,22 @@ export default {
         })
         .catch(error => console.log(error))
     },
-    GET_CRF_VERSION(context, crfId, version) {
+    GET_CRF_VERSION(context, crfId, version, include = true) {
       return Vue.axios.get('/crf/' + crfId + "/" + version)
         .then(payload => {
-          context.commit("SET_CRF", payload.data.payload)
+          context.commit("SET_CRF", payload.data.payload, include)
         })
         .catch(error => console.log(error))
     },
+    GET_CRF_NEWEST(context, crfId, include = true) {
+      return Vue.axios.get('/crf/' + crfId + "/newest")
+          .then(payload => {
+            context.commit("SET_CRF", payload.data.payload, include)
+          })
+          .catch(error => console.log(error))
+    },
     PUT_CRF(context, crf) {
-      return Vue.axios.put('/crf/' + crf._id, crf)
+      return Vue.axios.put('/crf/' + crf.formsId, crf)
         .then(payload => {
           context.commit("SET_CRF", payload.data.payload);
         })
@@ -76,10 +83,10 @@ export default {
         })
         .catch(error => console.log(error))
     },
-    DESTROY_CRF(context, crfId) {
-      return Vue.axios.delete('/crf/' + crfId)
+    DESTROY_CRF(context, formsId) {
+      return Vue.axios.delete('/crf/' + formsId)
         .then(payload => {
-          context.commit('DELETE_CRF', crfId)
+          context.commit('DELETE_CRF', formsId)
         })
         .catch(error => console.log(error))
     }

@@ -1,14 +1,22 @@
 const db = require("./stores.js");
 
 function getAllNewestCRFs(callback) {
-  db.crfs.find(
-    {
-      $where: function() {
-        return this.newestVersion === null || this._id === this.newestVersion;
-      }
-    },
-    callback
-  );
+  db.forms.find({
+    deleted: false
+  }, function(err, docs) {
+    const ids = [];
+    docs.forEach(elem => {
+      ids.push(elem.newestVersion);
+    });
+    db.crfs.find(
+      {
+        _id: {
+          $in: ids
+        }
+      },
+      callback
+    );
+  });
 }
 
 function getAllCRFs(callback) {

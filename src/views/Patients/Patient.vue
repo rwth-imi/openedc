@@ -18,12 +18,12 @@
         {{ data.item.name }}
       </template>
       <template v-slot:cell(status)="data">
-        {{ getStatus(data.item._id) }}
+        {{ getStatus(data.item.formsId, data.item._id) }}
       </template>
       <template v-slot:cell(settings)="data">
         <div class="settings">
           <b-button
-            v-if="filled(data.item._id)"
+            v-if="filled(data.item.formsId, data.item._id)"
             pill
             variant="outline-success"
             :to="{
@@ -84,24 +84,17 @@ export default {
       });
   },
   methods: {
-    getStatus(id) {
-      if (
-        this.crfData.some(elem => elem.newestCRF === id || elem.crfId === id)
-      ) {
+    getStatus(formsId, id) {
+      if (this.filled(formsId, id)) {
         return "begonnen";
       } else {
         return "nicht begonnen";
       }
     },
-    filled(id) {
+    filled(formsId, id) {
       return this.crfData.some(
-        elem => elem.newestCRF === id || elem.crfId === id
+        elem => elem.formsId === formsId || elem.crfId === id //TODO nach || nur abwärtskompatibilität
       );
-    },
-    getCRFDataId(crfId) {
-      return this.crfData.find(crfDataObj => {
-        return crfDataObj.crfId === crfId || crfDataObj.newestCRF === crfId;
-      })._id;
     }
   },
   computed: {

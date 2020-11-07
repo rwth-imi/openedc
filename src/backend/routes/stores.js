@@ -1,6 +1,10 @@
 // NeDB
 const Datastore = require('nedb');
 const db = {};
+db.forms = new Datastore({
+  filename: 'db/forms.db',
+  autoload: true
+});
 db.crfs = new Datastore({
   filename: 'db/crfs.db',
   autoload: true

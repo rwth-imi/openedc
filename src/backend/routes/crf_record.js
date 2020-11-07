@@ -58,6 +58,7 @@ router.post("/api/data/patient/:patientId/crf/:crfId/full", (req, res) => {
     (err, count) => {
       const number = count + 1;
       const crfInfo = {
+        formsId: req.body.formsId,
         crfId: req.params.crfId,
         patientId: req.params.patientId,
         createdAt: Date.now(),
@@ -179,17 +180,12 @@ router.get("/api/data/patient/:patientId/crf/:crfId/records", (req, res) => {
       } else {
         const versions = [];
 
-        let searchCrfId = null;
-        if (doc.newestVersion === null) {
-          searchCrfId = doc._id;
-        } else {
-          searchCrfId = doc.newestVersion;
-        }
+        const searchCrfId = doc.formsId;
         const crfIds = [searchCrfId];
         // crfId is the newest version
         db.crfs.find(
           {
-            newestVersion: searchCrfId
+            formsId: searchCrfId
           },
           (err, oldCrfs) => {
             oldCrfs.forEach(oldCrf => {
@@ -228,13 +224,11 @@ router.get("/api/data/patient/:patientId/crf/:crfId/records", (req, res) => {
 router.get("/api/data/patient/:patientId/crf/:crfId", (req, res) => {
   const patientId = req.params.patientId;
   const crfId = req.params.crfId;
-  db.crfRecord
-    .find({
-      patientId: patientId,
-      crfId: crfId
-    })
-    .sort({ recordNumber: -1 })
-    .exec((err, docs) => {
+  db.crfs.findOne(
+    {
+      _id: req.params.crfId
+    },
+    (err, crf) => {
       if (err) {
         console.log("error", err);
         res.json({
@@ -243,95 +237,58 @@ router.get("/api/data/patient/:patientId/crf/:crfId", (req, res) => {
           payload: null
         });
       } else {
-        if (docs.length === 0) {
-          // look for newest predecessor
-          db.crfs.find(
-            {
-              newestVersion: req.params.crfId
-            },
-            (err, docs) => {
-              if (err) {
-                console.log("error", err);
-                res.json({
+        db.crfRecord
+          .find({
+            patientId: patientId,
+            formsId: crf.formsId
+          })
+          .sort({ recordNumber: -1 })
+          .exec((err, docs) => {
+            if (err) {
+              console.log("error", err);
+              res.json({
+                success: false,
+                error: err,
+                payload: null
+              });
+            } else {
+              if (docs.length === 0) {
+                res.status(404).json({
                   success: false,
-                  error: err,
+                  error: "No record found",
                   payload: null
                 });
               } else {
-                db.crfRecord
-                  .find({
-                    $where: function() {
-                      return docs.some(e => e._id === this.crfId);
-                    }
-                  })
-                  .sort({
-                    createAt: -1
-                  })
-                  .exec((err, crfDataObj) => {
-                    if (crfDataObj.length > 0) {
-                      db.data.find(
-                        {
-                          recordId: crfDataObj[0]._id
-                        },
-                        (err, data) => {
-                          if (err) {
-                            res.json({
-                              success: false,
-                              error: err,
-                              payload: null
-                            });
-                          } else {
-                            res.json({
-                              success: true,
-                              error: false,
-                              payload: {
-                                crfId: crfDataObj[0].crfId,
-                                crfDataId: crfDataObj[0]._id,
-                                data: data
-                              }
-                            });
-                          }
-                        }
-                      );
-                    } else {
-                      res.status(404).json({
+                db.data.find(
+                  {
+                    recordId: docs[0]._id
+                  },
+                  (err, data) => {
+                    if (err) {
+                      res.json({
                         success: false,
                         error: err,
                         payload: null
                       });
+                    } else {
+                      res.json({
+                        success: true,
+                        error: false,
+                        payload: {
+                          crfId: docs[0].crfId,
+                          crfDataId: docs[0]._id,
+                          data: data
+                        }
+                      });
                     }
-                  });
-              }
-            }
-          );
-        } else {
-          db.data.find(
-            {
-              recordId: docs[0]._id
-            },
-            (err, data) => {
-              if (err) {
-                res.json({
-                  success: false,
-                  error: err,
-                  payload: null
-                });
-              } else {
-                res.json({
-                  success: true,
-                  error: false,
-                  payload: {
-                    crfId: docs[0].crfId,
-                    crfDataId: docs[0]._id,
-                    data: data
                   }
-                });
+                );
               }
             }
-          );
-        }
+          });
       }
-    });
+    }
+  );
 });
 
 router.get("/api/data/patient/:patientId/crfData/:crfDataId", (req, res) => {

@@ -47,12 +47,12 @@ export default {
         file: []
       },
       show: true,
-      crfId: null
+      formsId: null
     };
   },
   created() {
     console.log("created", this.$route);
-    this.crfId = this.$route.params.crfId;
+    this.formsId = this.$route.params.formsId;
   },
   methods: {
     onSubmit(evt) {
@@ -60,8 +60,8 @@ export default {
       const formData = new FormData();
       formData.append("filename", "EditedVersion-" + Date.now() + ".json");
       formData.append("file", this.form.file);
-      this.axios.post("crf/edit/" + this.crfId, formData).then(data => {
-        console.log("response", data);
+      this.axios.post("crf/edit/" + this.formsId, formData).then(data => {
+        this.$router.push({path: "/crfs"})
       });
     },
     onReset(evt) {

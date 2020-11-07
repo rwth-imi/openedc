@@ -24,63 +24,85 @@ const upload = multer({
   storage: storage
 });
 
+function setNewestVersion(id, newestId, errorCB, successCB, del = false) {
+  db.forms.update(
+    {
+      _id: id
+    },
+    {
+      $set: {
+        newestVersion: newestId,
+        deleted: del
+      }
+    },
+    {},
+    (err, num) => {
+      if (err) {
+        errorCB(err);
+      } else {
+        successCB(num);
+      }
+    }
+  );
+}
+
 function saveNewCRF(crf, errorCB, successCB) {
   if (!crf.version) {
     crf.version = 1;
   }
-  crf.newestVersion = null;
 
-  db.crfs.insert(crf, function(err, inserted) {
-    if (err) {
-      console.log("error", err);
-      errorCB(err);
-    } else {
-      successCB(inserted);
-    }
-  });
-}
-
-function saveEditCRF(crfId, crf, errorCB, successCB) {
-  db.crfs.findOne(
+  db.forms.insert(
     {
-      _id: crfId
+      newestVersion: null,
+      deleted: false
     },
-    (err, doc) => {
+    function(err, formsObj) {
       if (err) {
         console.log("error", err);
         errorCB(err);
       } else {
-        // TODO: Version aus Datein nehmen/vergleichen
-        crf.version = doc.version + 1;
-        crf.newestVersion = null;
+        crf.formsId = formsObj._id;
         db.crfs.insert(crf, function(err, inserted) {
           if (err) {
             console.log("error", err);
             errorCB(err);
           } else {
-            db.crfs.update(
-              {
-                $where: function() {
-                  return this.newestVersion === crfId || this._id === crfId;
-                }
+            setNewestVersion(formsObj._id, inserted._id, errorCB, function() {
+              successCB(inserted);
+            });
+          }
+        });
+      }
+    }
+  );
+}
+
+function saveEditCRF(formsId, crf, errorCB, successCB, del = false) {
+  db.crfs.count(
+    {
+      formsId: formsId
+    },
+    (err, count) => {
+      if (err) {
+        console.log("error", err);
+        errorCB(err);
+      } else {
+        const version = count + 1;
+        if (!crf.version || version < crf.version) crf.version = version; //Todo: Warning that wrong version
+        crf.formsId = formsId;
+        db.crfs.insert(crf, function(err, inserted) {
+          if (err) {
+            console.log("error", err);
+            errorCB(err);
+          } else {
+            setNewestVersion(
+              formsId,
+              inserted._id,
+              errorCB,
+              function() {
+                successCB(inserted);
               },
-              {
-                $set: {
-                  newestVersion: inserted._id
-                }
-              },
-              {
-                multi: true,
-                returnUpdatedDocs: true
-              },
-              (err, numReplaced, affectedDocuments) => {
-                if (err) {
-                  console.log("error", err);
-                  errorCB(err);
-                } else {
-                  successCB(inserted);
-                }
-              }
+              del
             );
           }
         });
@@ -117,35 +139,39 @@ router.post("/api/crf/upload/", upload.single("file"), (req, res, next) => {
   );
 });
 
-router.post("/api/crf/edit/:crfId", upload.single("file"), (req, res, next) => {
-  const absolutePath = path.join(path.resolve("./"), req.file.path);
-  const jsonString = fs.readFileSync(absolutePath, "utf-8");
-  const jsonObject = JSON.parse(jsonString);
+router.post(
+  "/api/crf/edit/:formsId",
+  upload.single("file"),
+  (req, res, next) => {
+    const absolutePath = path.join(path.resolve("./"), req.file.path);
+    const jsonString = fs.readFileSync(absolutePath, "utf-8");
+    const jsonObject = JSON.parse(jsonString);
 
-  // Todo: Parsing! From Excel to json
+    // Todo: Parsing! From Excel to json
 
-  jsonObject.createdAt = Date.now();
-  jsonObject.createdBy = req.body.user || "defaultUser"; // TODO: user management
+    jsonObject.createdAt = Date.now();
+    jsonObject.createdBy = req.body.user || "defaultUser"; // TODO: user management
 
-  saveEditCRF(
-    req.params.crfId,
-    jsonObject,
-    err => {
-      res.json({
-        success: false,
-        error: err,
-        payload: null
-      });
-    },
-    payload => {
-      res.json({
-        success: true,
-        error: false,
-        payload: payload
-      });
-    }
-  );
-});
+    saveEditCRF(
+      req.params.formsId,
+      jsonObject,
+      err => {
+        res.json({
+          success: false,
+          error: err,
+          payload: null
+        });
+      },
+      payload => {
+        res.json({
+          success: true,
+          error: false,
+          payload: payload
+        });
+      }
+    );
+  }
+);
 
 router.post("/api/crf/", (req, res, next) => {
   if (!req.body.crf.version) {
@@ -170,9 +196,9 @@ router.post("/api/crf/", (req, res, next) => {
   );
 });
 
-router.put("/api/crf/:crfId", (req, res, next) => {
+router.put("/api/crf/:formsId", (req, res, next) => {
   saveEditCRF(
-    req.params.crfId,
+    req.params.formsId,
     req.body.crf,
     err => {
       res.json({
@@ -248,11 +274,11 @@ router.get("/api/crf/:crfId/newest", (req, res, next) => {
           payload: null
         });
       } else {
-        db.crfs.findOne(
+        db.forms.findOne(
           {
-            _id: doc.newestVersion
+            _id: doc.formsId
           },
-          (err, crf) => {
+          (err, formObj) => {
             if (err) {
               console.log("error", err);
               res.json({
@@ -261,11 +287,27 @@ router.get("/api/crf/:crfId/newest", (req, res, next) => {
                 payload: null
               });
             } else {
-              res.json({
-                success: true,
-                error: false,
-                payload: crf
-              });
+              db.crfs.findOne(
+                {
+                  _id: formObj.newestVersion
+                },
+                (err, crf) => {
+                  if (err) {
+                    console.log("error", err);
+                    res.json({
+                      success: false,
+                      error: err,
+                      payload: null
+                    });
+                  } else {
+                    res.json({
+                      success: true,
+                      error: false,
+                      payload: crf
+                    });
+                  }
+                }
+              );
             }
           }
         );
@@ -274,10 +316,11 @@ router.get("/api/crf/:crfId/newest", (req, res, next) => {
   );
 });
 
-router.get("/api/crf/:crfId/:version", (req, res, next) => {
+router.get("/api/crf/:formsId/:version", (req, res, next) => {
   db.crfs.findOne(
     {
-      _id: req.params.crfId
+      formsId: req.params.formsId,
+      version: req.params.version
     },
     (err, doc) => {
       if (err) {
@@ -288,79 +331,43 @@ router.get("/api/crf/:crfId/:version", (req, res, next) => {
           payload: null
         });
       } else {
-        db.crfs.findOne(
-          {
-            newestVersion: doc.newestVersion,
-            version: req.params.version
-          },
-          (err, crf) => {
-            if (err) {
-              console.log("error", err);
-              res.json({
-                success: false,
-                error: err,
-                payload: null
-              });
-            } else {
-              res.json({
-                success: true,
-                error: false,
-                payload: crf
-              });
-            }
-          }
-        );
+        res.json({
+          success: true,
+          error: false,
+          payload: doc
+        });
       }
     }
   );
 });
 
-router.delete("/api/crf/:crfId/", (req, res, next) => {
+router.delete("/api/crf/:formsId/", (req, res, next) => {
   const deleteItem = {
     crf: {},
     createdAt: Date.now(),
     createdBy: req.body.user || "defaultUser", // TODO: user management
-    deleted: true,
-    newestVersion: null
+    deleted: true
   };
-  db.crfs.insert(deleteItem, (err, inserted) => {
-    if (err) {
+  saveEditCRF(
+    req.params.formsId,
+    deleteItem,
+    err => {
       console.log("error", err);
       res.json({
         success: false,
         error: err,
         payload: null
       });
-    } else {
-      db.crfs.update(
-        {
-          _id: req.params.crfId
-        },
-        {
-          $set: {
-            newestVersion: inserted._id
-          }
-        },
-        {},
-        (err, numReplaced) => {
-          if (err) {
-            console.log("error", err);
-            res.json({
-              success: false,
-              error: err,
-              payload: null
-            });
-          } else {
-            res.json({
-              success: true,
-              error: false,
-              payload: null
-            });
-          }
-        }
-      );
-    }
-  });
+    },
+    () => {
+      res.json({
+        success: true,
+        error: false,
+        payload: null
+      });
+    },
+    true
+  );
 });
 
 module.exports = router;

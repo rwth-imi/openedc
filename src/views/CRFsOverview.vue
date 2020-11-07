@@ -21,9 +21,9 @@
         {{ (new Date(data.value)) | formatDate }}
       </template>
       <template v-slot:cell(settings)="data">
-        <b-button pill variant="outline-success" :to="{ name: 'EditCRF', params: {crfId: data.item._id }}">Edit</b-button>
+        <b-button pill variant="outline-success" :to="{ name: 'EditCRF', params: {formsId: data.item.formsId }}">Edit</b-button>
         <b-button pill variant="outline-success">Export</b-button>
-        <b-button pill variant="outline-danger">Delete</b-button>
+        <b-button pill variant="outline-danger" @click="deleteCRF(data.item.formsId)">Delete</b-button>
       </template>
     </b-table>
   </div>
@@ -43,6 +43,11 @@ export default {
       return this.crfs.filter(crf => {
         return crf._id.includes(this.search.toLowerCase());
       });
+    }
+  },
+  methods:{
+    deleteCRF(formsId) {
+      this.$store.dispatch("crfs/DESTROY_CRF", formsId);
     }
   },
   data() {

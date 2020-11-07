@@ -274,16 +274,28 @@ export default {
                 });
               });
           } else {
-            this.$axios
+            return this.$axios
               .get(`/data/patient/${patientId}/crf/${crfId}`)
               .then(payload => {
                 this.record.id = payload.data.payload.crfDataId;
-                this.record.crfId = crfId;
-                payload.data.payload.data.forEach((item, i) => {
-                  this.data[item.field] = {};
-                  this.data[item.field].value = item.value;
-                  this.data[item.field]._id = item._id;
-                });
+                if(payload.data.payload.crfId !== crfId) {
+                  return this.$store.dispatch("crfs/GET_CRF", payload.data.payload.crfId).then(() => {
+                    this.record.crfId = payload.data.payload.crfId;
+                    payload.data.payload.data.forEach((item, i) => {
+                      this.data[item.field] = {};
+                      this.data[item.field].value = item.value;
+                      this.data[item.field]._id = item._id;
+                    });
+                  })
+                } else {
+                  this.record.crfId = payload.data.payload.crfId;
+                  payload.data.payload.data.forEach((item, i) => {
+                    this.data[item.field] = {};
+                    this.data[item.field].value = item.value;
+                    this.data[item.field]._id = item._id;
+                  });
+                }
+
               })
               .catch(() => {
                 this.new = true;
@@ -320,7 +332,7 @@ export default {
         this.$axios
           .post(
             `/data/patient/${this.patientId}/crf/${this.$route.params.crfId}/full`,
-            { data: this.data }
+            { data: this.data, formsId: this.crf.formsId }
           )
           .then(() => {
             console.log("saved!");
@@ -350,7 +362,11 @@ export default {
         this.data = {
           record: "test1"
         };
-        return this.$store.dispatch("crfs/GET_CRF", this.record.crfId, false);
+        return this.$store.dispatch(
+          "crfs/GET_CRF_NEWEST",
+          this.record.crfId,
+          false
+        );
       }
     }
   },

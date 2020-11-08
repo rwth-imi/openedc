@@ -44,9 +44,9 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/createCRF",
-    name: "CreateCRF",
+    name: "CRFUpload",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/CreateCRF.vue")
+      import(/* webpackChunkName: "about" */ "../views/CRFUpload.vue")
   },
   {
     path: "/editCRF",

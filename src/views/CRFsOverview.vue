@@ -2,7 +2,7 @@
   <div class="mainPage">
     <h1>CRFs Overview</h1>
     <div class="" align="right">
-      <b-button pill variant="success" to="/CreateCRF">Add</b-button>
+      <b-button pill variant="success" :to="{name: 'CRFUpload'}">Add</b-button>
     </div>
     <b-table striped hover :items="crfs" :fields="fields">
       <template v-slot:cell(name)="data">
@@ -21,7 +21,7 @@
         {{ (new Date(data.value)) | formatDate }}
       </template>
       <template v-slot:cell(settings)="data">
-        <b-button pill variant="outline-success" :to="{ name: 'EditCRF', params: {formsId: data.item.formsId }}">Edit</b-button>
+        <b-button pill variant="outline-success" :to="{ name: 'CRFUpload', params: {formsId: data.item.formsId }}">Edit</b-button>
         <b-button pill variant="outline-success">Export</b-button>
         <b-button pill variant="outline-danger" @click="deleteCRF(data.item.formsId)">Delete</b-button>
       </template>

@@ -46,10 +46,12 @@ function setNewestVersion(id, newestId, errorCB, successCB, del = false) {
   );
 }
 
-function saveNewCRF(crf, errorCB, successCB) {
+function saveNewCRF(crf, user, errorCB, successCB) {
   if (!crf.version) {
     crf.version = 1;
   }
+  crf.createdAt = Date.now();
+  crf.createdBy = user || "defaultUser"; // TODO: user management
 
   db.forms.insert(
     {
@@ -77,7 +79,9 @@ function saveNewCRF(crf, errorCB, successCB) {
   );
 }
 
-function saveEditCRF(formsId, crf, errorCB, successCB, del = false) {
+function saveEditCRF(formsId, crf, user, errorCB, successCB, del = false) {
+  crf.createdAt = Date.now();
+  crf.createdBy = user || "defaultUser"; // TODO: user management
   db.crfs.count(
     {
       formsId: formsId
@@ -111,17 +115,90 @@ function saveEditCRF(formsId, crf, errorCB, successCB, del = false) {
   );
 }
 
+function log(type, msg) {
+  return {
+    type: type,
+    msg: msg
+  };
+}
+
+function JSONParser(fileContent) {
+  const jsonObject = JSON.parse(fileContent);
+  // TODO: Verify!
+  return {
+    crf: jsonObject,
+    log: [log("warning", "Verification not done!"), log("info", "Verifed!")],
+    withoutError: true
+  };
+}
+
+function NotImplementedParser() {
+  return {
+    crf: null,
+    log: [log("error", "Format not implemented!")],
+    withoutError: false
+  };
+}
+
+function parseAndVerify(fileContent, format) {
+  switch (format) {
+    case "JSON":
+      return JSONParser(fileContent);
+    case "Excel":
+    case "RedCap":
+    case "OpenClinica":
+    default:
+      // TODO: Parse and Verify!
+      return NotImplementedParser();
+  }
+}
+
+router.post(
+  "/api/crf/upload/check",
+  upload.single("file"),
+  (req, res, next) => {
+    const absolutePath = path.join(path.resolve("./"), req.file.path);
+    const fileContent = fs.readFileSync(absolutePath, "utf-8");
+    const format = req.body.format;
+
+    // TODO: Parsing and verifying test
+    const { crf, log, withoutError } = parseAndVerify(fileContent, format);
+
+    if (withoutError) {
+      res.json({
+        success: true,
+        error: false,
+        payload: {
+          crf: crf,
+          log: log,
+          saveAllowed: withoutError
+        }
+      });
+    } else {
+      res.json({
+        success: false,
+        error: "Error while verifying",
+        payload: {
+          crf: crf,
+          log: log,
+          saveAllowed: withoutError
+        }
+      });
+    }
+  }
+);
+
 router.post("/api/crf/upload/", upload.single("file"), (req, res, next) => {
   const absolutePath = path.join(path.resolve("./"), req.file.path);
   const jsonString = fs.readFileSync(absolutePath, "utf-8");
   const jsonObject = JSON.parse(jsonString);
 
   // Todo: Parsing! From Excel to json
-  jsonObject.createdAt = Date.now();
-  jsonObject.createdBy = req.body.user || "defaultUser"; // TODO: user management
 
+  const user = req.body.user;
   saveNewCRF(
     jsonObject,
+    user,
     err => {
       res.json({
         success: false,
@@ -149,12 +226,10 @@ router.post(
 
     // Todo: Parsing! From Excel to json
 
-    jsonObject.createdAt = Date.now();
-    jsonObject.createdBy = req.body.user || "defaultUser"; // TODO: user management
-
     saveEditCRF(
       req.params.formsId,
       jsonObject,
+      req.body.user || "defaultUser",
       err => {
         res.json({
           success: false,
@@ -179,6 +254,7 @@ router.post("/api/crf/", (req, res, next) => {
   }
   saveNewCRF(
     req.body.crf,
+    req.body.user || "defaultUser",
     err => {
       res.json({
         success: false,
@@ -200,6 +276,7 @@ router.put("/api/crf/:formsId", (req, res, next) => {
   saveEditCRF(
     req.params.formsId,
     req.body.crf,
+    req.body.user || "defaultUser",
     err => {
       res.json({
         success: false,

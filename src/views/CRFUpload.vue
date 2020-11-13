@@ -136,13 +136,15 @@ export default {
       const send = {
         crf: this.crf
       };
-      if(this.formsId === null) {
+      if(this.formsId === null || this.formsId === undefined) {
         this.axios.post("crf/", send).then(() => {
           console.log("saved");
+          this.$router.push("/crfs");
         });
       }else {
         this.axios.put("crf/" + this.formsId, send).then(() => {
           console.log("edited");
+          this.$router.push("/crfs");
         });
       }
     },

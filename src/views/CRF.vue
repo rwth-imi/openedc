@@ -1,16 +1,7 @@
 <template>
   <div>
     <b-row>
-      <b-col sm="2" class="sidebarCRFs">
-        <SidebarCRFs :crf="crf"></SidebarCRFs>
-      </b-col>
       <b-col sm="10" class="mainPage">
-        <!-- todo: version selection -->
-        <PatientDisplay
-          :patientId="patientId"
-          :date="date"
-          :dates="dates"
-        ></PatientDisplay>
 
         <h1>CRF: {{ crf.name }}</h1>
         <div
@@ -32,8 +23,6 @@
 
 <script>
 import { mapState } from "vuex";
-import SidebarCRFs from "@/components/SidebarCRFs.vue";
-import PatientDisplay from "@/components/PatientDisplay.vue";
 import FileUploadField from "@/components/input_fields/FileUploadField.vue";
 import Checkboxes from "@/components/input_fields/Checkboxes.vue";
 import TextField from "@/components/input_fields/TextField.vue";
@@ -43,8 +32,6 @@ import TextArea from "@/components/input_fields/TextArea.vue";
 export default {
   name: "CRFs",
   components: {
-    SidebarCRFs,
-    PatientDisplay,
     FileUploadField,
     Checkboxes,
     TextField,
@@ -96,15 +83,5 @@ export default {
 h3 {
   text-align: left;
   margin: 10px;
-}
-
-.sidebarCRFs {
-  border-right: #385723 1px solid;
-  background-color: #e2f0d9;
-  text-align: left;
-}
-
-.sidebarCRFs a {
-  color: #385723 !;
 }
 </style>

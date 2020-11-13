@@ -98,8 +98,6 @@
 
 <script>
 import { mapState } from "vuex";
-import SidebarCRFs from "@/components/SidebarCRFs.vue";
-import PatientDisplay from "@/components/PatientDisplay.vue";
 import FileUploadField from "@/components/input_fields/FileUploadField.vue";
 import Checkboxes from "@/components/input_fields/Checkboxes.vue";
 import TextField from "@/components/input_fields/TextField.vue";
@@ -110,8 +108,6 @@ import TextArea from "@/components/input_fields/TextArea.vue";
 export default {
   name: "CRFData",
   components: {
-    SidebarCRFs,
-    PatientDisplay,
     FileUploadField,
     Checkboxes,
     TextField,
@@ -410,16 +406,6 @@ h3 {
 
 .floatingChilds div {
   float: left;
-}
-
-.sidebarCRFs {
-  border-right: #385723 1px solid;
-  background-color: #e2f0d9;
-  text-align: left;
-}
-
-.sidebarCRFs a {
-  color: #385723 !important;
 }
 
 .mainPage {

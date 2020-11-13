@@ -45,7 +45,7 @@ export default {
       });
     }
   },
-  methods:{
+  methods: {
     deleteCRF(formsId) {
       this.$store.dispatch("crfs/DESTROY_CRF", formsId);
     }

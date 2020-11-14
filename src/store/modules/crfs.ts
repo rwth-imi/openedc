@@ -41,8 +41,12 @@ export default {
   },
 
   actions: {
-    GET_CRFS(context) {
-      return Vue.axios.get('/crf/')
+    GET_CRFS(context, patient = false) {
+      return Vue.axios.get('/crf/', {
+        params: {
+          patient: patient
+        }
+      })
         .then(payload => {
           context.commit("SET_CRFS", payload.data.payload);
         })
@@ -66,6 +70,13 @@ export default {
       return Vue.axios.get('/crf/' + crfId + "/newest")
           .then(payload => {
             context.commit("SET_CRF", payload.data.payload, include)
+          })
+          .catch(error => console.log(error))
+    },
+    GET_CRF_PATIENT(context) {
+      return Vue.axios.get('/crf/patient')
+          .then(payload => {
+            context.commit("SET_CRF", payload.data.payload, false)
           })
           .catch(error => console.log(error))
     },

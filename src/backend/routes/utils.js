@@ -1,6 +1,6 @@
 const db = require("./stores.js");
 
-function getAllNewestCRFs(callback) {
+function getAllNewestCRFs(callback, patient = false) {
   db.forms.find({
     deleted: false
   }, function(err, docs) {
@@ -8,14 +8,28 @@ function getAllNewestCRFs(callback) {
     docs.forEach(elem => {
       ids.push(elem.newestVersion);
     });
-    db.crfs.find(
-      {
-        _id: {
-          $in: ids
-        }
-      },
-      callback
-    );
+    if(patient === "true") {
+      db.crfs.find(
+          {
+            _id: {
+              $in: ids
+            }
+          },
+          callback
+      );
+    } else {
+      db.crfs.find(
+          {
+            _id: {
+              $in: ids
+            },
+            name: {
+              $ne: "Patient"
+            }
+          },
+          callback
+      );
+    }
   });
 }
 

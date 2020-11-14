@@ -54,7 +54,6 @@ import { mapState } from "vuex";
 export default {
   name: "Patient",
   components: {},
-  props: ["patientId"],
   data() {
     return {
       search: "",
@@ -71,10 +70,12 @@ export default {
         },
         "Settings"
       ],
-      crfData: []
+      crfData: [],
+      patientId: null
     };
   },
   mounted() {
+    if(!this.patientId && this.$route.params.patientId) this.patientId = this.$route.params.patientId;
     this.$store.dispatch("crfs/GET_CRFS");
     this.$store.dispatch("patients/GET_PATIENT", this.patientId);
     this.$axios

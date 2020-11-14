@@ -14,83 +14,21 @@
     </sidebar-menu>
     <div id="sidebarpage" :class="[{ collapsed: collapsed }]">
       <b-col sm="12" class="mainPage" v-if="show">
-        <b-row class="actionBar">
-          <b-col sm="3">
-            <label :for="'recordSelect'">Record:</label>
-          </b-col>
-          <b-col sm="3">
-            <b-form-select
-              id="recordSelect"
-              v-model="record"
-              :options="records"
-              class="mb-3"
-              @change="changeRecord()"
-            >
-              <!-- This slot appears above the options from 'options' prop -->
-              <template v-slot:first>
-                <b-form-select-option :value="null" disabled
-                  >-- Please select a record --</b-form-select-option
-                >
-              </template>
-              <!-- These options will appear after the ones from 'options' prop -->
-              <b-form-select-option
-                :value="{ id: 'new', crfId: crf.newestVersion || crf._id }"
-                >New</b-form-select-option
-              >
-            </b-form-select>
-          </b-col>
-          <b-col sm="6" class="actions">
-            <b-button type="submit" variant="primary" @click="submit"
-              >Save
-            </b-button>
-          </b-col>
-        </b-row>
-
+        <ActionBar
+          :record="record"
+          :records="records"
+          :crf-id="crf.newestVersion || crf._id"
+          :multiple-records="crf.multipleRecords"
+          @submitted="submit"
+          @changedRecord="changeRecord"
+        ></ActionBar>
         <h1>CRF: {{ crf.name }}</h1>
-        <div v-if="section === null">
-          <div v-for="(sectionItem, section) in crf.sections" :key="section">
-            <h2>Section: {{ sectionItem.title }}</h2>
-            <hr class="section" />
-            <div
-              v-for="subsection in crf.sections[section].subsection"
-              :key="subsection.name"
-            >
-              <div v-if="subsection.name !== ''">
-                <hr class="subsection" />
-                <h3>{{ subsection.name }}</h3>
-              </div>
-              <div v-for="(item, index) in subsection.items" :key="item.name">
-                <component
-                  :ref="item.name"
-                  v-bind:is="item.type"
-                  :options="item"
-                  :value="data[item.name]"
-                  @changed="changed(subsection, index, item.name, $event)"
-                ></component>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div v-else>
-          <div
-            v-for="subsection in crf.sections[section].subsection"
-            :key="subsection.name"
-          >
-            <div v-if="subsection.name !== ''">
-              <hr />
-              <h3>{{ subsection.name }}</h3>
-            </div>
-            <div v-for="(item, index) in subsection.items" :key="item.name">
-              <component
-                :ref="item.name"
-                v-bind:is="item.type"
-                :options="item"
-                :value="data[item.name]"
-                @changed="changed(subsection, index, item.name, $event)"
-              ></component>
-            </div>
-          </div>
-        </div>
+        <CRF
+          :crf-id="crf._id"
+          :data="data"
+          :section="section"
+          :sections="sections"
+        ></CRF>
       </b-col>
     </div>
   </div>
@@ -98,22 +36,14 @@
 
 <script>
 import { mapState } from "vuex";
-import FileUploadField from "@/components/input_fields/FileUploadField.vue";
-import Checkboxes from "@/components/input_fields/Checkboxes.vue";
-import TextField from "@/components/input_fields/TextField.vue";
-import SingleSelectField from "@/components/input_fields/SingleSelectField.vue";
-import RadioButtons from "@/components/input_fields/RadioButtons.vue";
-import TextArea from "@/components/input_fields/TextArea.vue";
+import ActionBar from "@/components/ActionBar";
+import CRF from "@/components/CRF";
 
 export default {
   name: "CRFData",
   components: {
-    FileUploadField,
-    Checkboxes,
-    TextField,
-    SingleSelectField,
-    RadioButtons,
-    TextArea
+    ActionBar,
+    CRF
   },
   data() {
     return {
@@ -123,9 +53,6 @@ export default {
       date: "Wed Sep 30 2020",
       dates: ["Wed Sep 30 2020", "Thu Sep 17 2020", "Tue Sep 1 2020"],
       show: false,
-      data: {
-        record: "test1"
-      },
       new: true,
       crfData: [],
       collapsed: false,
@@ -213,20 +140,21 @@ export default {
     if (this.record.id === "new" && this.record.crfId === null) {
       this.record.crfId = this.$route.params.crfId;
     }
+
     this.fetchData(
-      this.$route.params.crfId,
-      this.patientId,
-      this.$route.params.crfDataId
+        this.$route.params.crfId,
+        this.patientId,
+        this.$route.params.crfDataId
     ).then(() => {
       this.createDataSections();
       this.$store.dispatch("crfs/GET_CRFS");
       this.show = true;
     });
     this.$axios
-      .get("/data/patient/" + this.patientId + "/crfs")
-      .then(payload => {
-        this.crfData = payload.data.payload;
-      });
+        .get("/data/patient/" + this.patientId + "/crfs")
+        .then(payload => {
+          this.crfData = payload.data.payload;
+        });
   },
   methods: {
     resetData() {
@@ -263,35 +191,42 @@ export default {
             this.$axios
               .get(`/data/patient/${patientId}/crfData/${crfDataId}`)
               .then(payload => {
+                const tmpData = {};
                 payload.data.payload.data.forEach(item => {
-                  this.data[item.field] = {};
-                  this.data[item.field].value = item.value;
-                  this.data[item.field]._id = item._id;
+                  tmpData[item.field] = {};
+                  tmpData[item.field].value = item.value;
+                  tmpData[item.field]._id = item._id;
                 });
+                this.data = tmpData;
               });
           } else {
             return this.$axios
               .get(`/data/patient/${patientId}/crf/${crfId}`)
               .then(payload => {
                 this.record.id = payload.data.payload.crfDataId;
-                if(payload.data.payload.crfId !== crfId) {
-                  return this.$store.dispatch("crfs/GET_CRF", payload.data.payload.crfId).then(() => {
-                    this.record.crfId = payload.data.payload.crfId;
-                    payload.data.payload.data.forEach((item, i) => {
-                      this.data[item.field] = {};
-                      this.data[item.field].value = item.value;
-                      this.data[item.field]._id = item._id;
+                if (payload.data.payload.crfId !== crfId) {
+                  return this.$store
+                    .dispatch("crfs/GET_CRF", payload.data.payload.crfId)
+                    .then(() => {
+                      this.record.crfId = payload.data.payload.crfId;
+                      const tmpData = {};
+                      payload.data.payload.data.forEach(item => {
+                        tmpData[item.field] = {};
+                        tmpData[item.field].value = item.value;
+                        tmpData[item.field]._id = item._id;
+                      });
+                      this.data = tmpData;
                     });
-                  })
                 } else {
                   this.record.crfId = payload.data.payload.crfId;
-                  payload.data.payload.data.forEach((item, i) => {
-                    this.data[item.field] = {};
-                    this.data[item.field].value = item.value;
-                    this.data[item.field]._id = item._id;
+                  const tmpData = {};
+                  payload.data.payload.data.forEach(item => {
+                    tmpData[item.field] = {};
+                    tmpData[item.field].value = item.value;
+                    tmpData[item.field]._id = item._id;
                   });
+                  this.data = tmpData;
                 }
-
               })
               .catch(() => {
                 this.new = true;
@@ -318,11 +253,7 @@ export default {
         elem => elem.newestCRF === id || elem.crfId === id
       );
     },
-    changed(section, index, name, changedValue) {
-      if (!this.data[name]) this.data[name] = {};
-      this.data[name].value = changedValue;
-      section.items[index].value = changedValue;
-    },
+
     submit() {
       if (this.new) {
         this.$axios
@@ -349,7 +280,8 @@ export default {
         this.show = true;
       });
     },
-    changeRecord() {
+    changeRecord(record) {
+      this.record = record;
       if (this.record.id !== "new") {
         this.new = false;
         this.refetch(this.record.crfId, this.patientId, this.record.id);
@@ -410,22 +342,5 @@ h3 {
 
 .mainPage {
   text-align: left;
-}
-
-.actionBar {
-  background-color: #e3e3e3;
-  color: black;
-  font-size: 20px;
-  padding: 20px 20px 15px 20px;
-}
-
-.actionBar .actions {
-  text-align: right;
-}
-
-.actionBar .actions button {
-  background-color: #385723;
-  color: white;
-  border-color: #385723;
 }
 </style>

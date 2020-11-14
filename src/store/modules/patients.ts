@@ -47,6 +47,13 @@ export default {
         })
         .catch(error => console.log(error))
     },
+    GET_PATIENTS_FULL(context) {
+      Vue.axios.get('/patient/full')
+          .then(payload => {
+            context.commit("SET_PATIENTS", payload.data.payload);
+          })
+          .catch(error => console.log(error))
+    },
     GET_PATIENT(context, patientId) {
       return Vue.axios.get('/patient/'+patientId)
         .then(payload => {

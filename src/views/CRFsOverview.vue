@@ -7,15 +7,12 @@
     <b-table striped hover :items="crfs" :fields="fields">
       <template v-slot:cell(name)="data">
         <router-link
-          :to="{ name: 'CRF', params: { crfId: data.item._id, section: 0 } }"
+          :to="{ name: 'CRFDetail', params: { crfId: data.item._id, section: 0 } }"
           >{{ data.value }}</router-link
         >
       </template>
       <template v-slot:cell(countFilled)="data">
-        <router-link
-          :to="{ name: 'CRFsFilled', params: { crfId: data.item._id } }"
-          >{{ data.value }}</router-link
-        >
+        {{ data.item.count }}
       </template>
       <template v-slot:cell(createdAt)="data">
         {{ (new Date(data.value)) | formatDate }}
@@ -35,7 +32,7 @@ export default {
   name: "CRFs",
   components: {},
   mounted() {
-    this.$store.dispatch("crfs/GET_CRFS");
+    this.$store.dispatch("crfs/GET_CRFS", true);
   },
   computed: {
     ...mapState("crfs", ["crfs"]),

@@ -18,44 +18,22 @@
       </b-col>
     </b-row>
     <b-table striped hover :items="filteredList" :fields="fields">
-      <template v-slot:cell(patientId)="data">
-        <router-link
-          :to="{
-            name: 'Patient',
-            query: { patientId: data.value },
-            params: { patientId: data.value }
-          }"
-          >{{ data.value }}</router-link
-        >
-      </template>
-      <template v-slot:cell(birth)="data">
-        {{ new Date(data.value) | formatDate }}
-      </template>
-      <template v-slot:cell(crfs)="data">
-        <div v-for="index in data.value" :key="index">
-          <router-link
-            :to="{
-              name: 'CRF',
-              params: {
-                crfId: getCRFId(index),
-                section: 0,
-                patientId: data.item.patientId
-              }
-            }"
-            >{{ getCRFName(index) }}</router-link
-          >
-          <b-icon-pencil></b-icon-pencil>
-          <b-icon-plus-circle></b-icon-plus-circle>
-        </div>
-        <b-icon-plus-circle></b-icon-plus-circle>
-      </template>
       <template v-slot:cell(settings)="data">
+        <b-button
+            pill
+            variant="outline-success"
+            :to="{
+            name: 'Patient',
+            params: { patientId: data.item._id }
+          }"
+        >Select</b-button
+        >
         <b-button
           pill
           variant="outline-success"
           :to="{
-            name: 'PatientEdit',
-            params: { patientId: data.item.patientId }
+            name: 'PatientRegister',
+            params: { patientId: data.item._id }
           }"
           >Edit</b-button
         >
@@ -63,7 +41,7 @@
         <b-button
           pill
           variant="outline-danger"
-          @click="deletePatient(data.item.patientId)"
+          @click="deletePatient(data.item._id)"
           >Delete</b-button
         >
       </template>
@@ -77,67 +55,52 @@ export default {
   name: "Patients",
   components: {},
   mounted() {
-    this.$store.dispatch("patients/GET_PATIENTS");
+    this.$store.dispatch("patients/GET_PATIENTS_FULL");
+    this.$store.dispatch("crfs/GET_CRF_PATIENT");
   },
   computed: {
     ...mapState("patients", ["patients"]),
+    ...mapState("crfs", ["crf"]),
     filteredList() {
       return this.patients.filter(patient => {
-        return patient.patientId
-          .toLowerCase()
-          .includes(this.search.toLowerCase());
+        let found = false;
+        Object.entries(patient).forEach((field) => {
+          if((field[1]+"").toLowerCase().includes(this.search.toLowerCase())) {
+            found = true;
+          }
+        });
+        return found;
       });
+      // .includes(this.search.toLowerCase());
+    },
+    fields() {
+      const dataFields = [];
+      if(!this.crf) return dataFields;
+      this.crf.sections.forEach((section) => {
+        section.subsection.forEach((subsection) => {
+          subsection.items.forEach((item) => {
+            if(item.summary) {
+              dataFields.push({
+                key: item.name,
+                label: item.label,
+                sortable: true
+              });
+            }
+          });
+        });
+      });
+      dataFields.push("Settings")
+      return dataFields;
     }
   },
   data() {
     return {
-      search: "",
-      fields: [
-        {
-          key: "patientId",
-          label: "No.",
-          sortable: true
-        },
-        {
-          key: "sex",
-          label: "Gender",
-          sortable: true
-        },
-        {
-          key: "birth",
-          label: "Day of Birth",
-          sortable: true
-        },
-        "Settings"
-      ],
-      crfs: [
-        {
-          name: "First CRF",
-          countFilled: 2,
-          createdAt: new Date(),
-          id: 0
-        },
-        {
-          name: "Second CRF",
-          countFilled: 4,
-          createdAt: new Date(),
-          id: 1
-        }
-      ]
+      search: ""
     };
   },
   methods: {
-    getCRFName(index) {
-      return this.crfs[index].name;
-    },
-    getCRFId(index) {
-      return this.crfs[index].id;
-    },
     deletePatient(patientId) {
-      console.log("del", patientId);
-      this.$store.dispatch("patients/DESTROY_PATIENT", patientId).then(() => {
-        console.log("deleted");
-      });
+      this.$store.dispatch("patients/DESTROY_PATIENT", patientId)
     }
   }
 };

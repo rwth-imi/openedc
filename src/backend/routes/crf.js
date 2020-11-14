@@ -126,7 +126,7 @@ function JSONParser(fileContent) {
   const jsonObject = JSON.parse(fileContent);
   // TODO: Verify!
   return {
-    crf: jsonObject,
+    crfs: [jsonObject],
     log: [log("warning", "Verification not done!"), log("info", "Verifed!")],
     withoutError: true
   };
@@ -162,14 +162,14 @@ router.post(
     const format = req.body.format;
 
     // TODO: Parsing and verifying test
-    const { crf, log, withoutError } = parseAndVerify(fileContent, format);
+    const { crfs, log, withoutError } = parseAndVerify(fileContent, format);
 
     if (withoutError) {
       res.json({
         success: true,
         error: false,
         payload: {
-          crf: crf,
+          crfs: crfs,
           log: log,
           saveAllowed: withoutError
         }
@@ -179,72 +179,12 @@ router.post(
         success: false,
         error: "Error while verifying",
         payload: {
-          crf: crf,
+          crfs: crfs,
           log: log,
           saveAllowed: withoutError
         }
       });
     }
-  }
-);
-
-router.post("/api/crf/upload/", upload.single("file"), (req, res, next) => {
-  const absolutePath = path.join(path.resolve("./"), req.file.path);
-  const jsonString = fs.readFileSync(absolutePath, "utf-8");
-  const jsonObject = JSON.parse(jsonString);
-
-  // Todo: Parsing! From Excel to json
-
-  const user = req.body.user;
-  saveNewCRF(
-    jsonObject,
-    user,
-    err => {
-      res.json({
-        success: false,
-        error: err,
-        payload: null
-      });
-    },
-    payload => {
-      res.json({
-        success: true,
-        error: false,
-        payload: payload
-      });
-    }
-  );
-});
-
-router.post(
-  "/api/crf/edit/:formsId",
-  upload.single("file"),
-  (req, res, next) => {
-    const absolutePath = path.join(path.resolve("./"), req.file.path);
-    const jsonString = fs.readFileSync(absolutePath, "utf-8");
-    const jsonObject = JSON.parse(jsonString);
-
-    // Todo: Parsing! From Excel to json
-
-    saveEditCRF(
-      req.params.formsId,
-      jsonObject,
-      req.body.user || "defaultUser",
-      err => {
-        res.json({
-          success: false,
-          error: err,
-          payload: null
-        });
-      },
-      payload => {
-        res.json({
-          success: true,
-          error: false,
-          payload: payload
-        });
-      }
-    );
   }
 );
 
@@ -428,6 +368,7 @@ router.delete("/api/crf/:formsId/", (req, res, next) => {
   saveEditCRF(
     req.params.formsId,
     deleteItem,
+    req.body.user || "defaultUser",
     err => {
       console.log("error", err);
       res.json({

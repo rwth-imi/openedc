@@ -55,6 +55,25 @@
           </b-col>
         </b-row>
       </b-card>
+      <b-card bg-variant="light">
+        <b-row>
+          <b-col sm="3">
+            <h2>CRFs:</h2>
+          </b-col>
+          <b-col sm="9">
+            <b-form-group class="log" label="Select crfs to upload">
+              <b-form-checkbox
+                  v-for="crf in crfs"
+                  v-model="selected"
+                  :key="crf.name"
+                  :value="crf"
+              >
+                {{ crf.name }}
+              </b-form-checkbox>
+            </b-form-group>
+          </b-col>
+        </b-row>
+      </b-card>
       <b-button
         type="submit"
         variant="primary"
@@ -80,7 +99,8 @@ export default {
       formatOptions: ["JSON", "Excel", "RedCap", "OpenClinica"],
       show: true,
       saveAllowed: false,
-      crf: {},
+      crfs: [],
+      selected: [],
       log: [],
       formsId: null
     };
@@ -113,7 +133,8 @@ export default {
         .then(({ data }) => {
           this.log = data.payload.log;
           this.saveAllowed = data.payload.saveAllowed;
-          this.crf = data.payload.crf;
+          this.crfs = data.payload.crfs;
+          this.selected = this.crfs;
         })
         .catch((err, data) => {
           console.log(err, data);
@@ -133,20 +154,22 @@ export default {
       });
     },
     onSave() {
-      const send = {
-        crf: this.crf
-      };
-      if(this.formsId === null || this.formsId === undefined) {
-        this.axios.post("crf/", send).then(() => {
-          console.log("saved");
-          this.$router.push("/crfs");
-        });
-      }else {
-        this.axios.put("crf/" + this.formsId, send).then(() => {
-          console.log("edited");
-          this.$router.push("/crfs");
-        });
-      }
+      this.selected.forEach(crf => {
+        const send = {
+          crf: crf
+        };
+        if(this.formsId === null || this.formsId === undefined) {
+          this.axios.post("crf/", send).then(() => {
+            console.log("saved");
+            this.$router.push("/crfs");
+          });
+        }else {
+          this.axios.put("crf/" + this.formsId, send).then(() => {
+            console.log("edited");
+            this.$router.push("/crfs");
+          });
+        }
+      });
     },
     goBack() {
       // Todo: Delete File if it was uploaded

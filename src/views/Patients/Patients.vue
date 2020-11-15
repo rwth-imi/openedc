@@ -20,13 +20,13 @@
     <b-table striped hover :items="filteredList" :fields="fields">
       <template v-slot:cell(settings)="data">
         <b-button
-            pill
-            variant="outline-success"
-            :to="{
+          pill
+          variant="outline-success"
+          :to="{
             name: 'Patient',
             params: { patientId: data.item._id }
           }"
-        >Select</b-button
+          >Select</b-button
         >
         <b-button
           pill
@@ -62,24 +62,29 @@ export default {
     ...mapState("patients", ["patients"]),
     ...mapState("crfs", ["crf"]),
     filteredList() {
-      return this.patients.filter(patient => {
-        let found = false;
-        Object.entries(patient).forEach((field) => {
-          if((field[1]+"").toLowerCase().includes(this.search.toLowerCase())) {
-            found = true;
-          }
+      if (this.patients) {
+        return this.patients.filter(patient => {
+          let found = false;
+          Object.entries(patient).forEach(field => {
+            if (
+              (field[1] + "").toLowerCase().includes(this.search.toLowerCase())
+            ) {
+              found = true;
+            }
+          });
+          return found;
         });
-        return found;
-      });
-      // .includes(this.search.toLowerCase());
+      } else {
+        return [];
+      }
     },
     fields() {
       const dataFields = [];
-      if(!this.crf) return dataFields;
-      this.crf.sections.forEach((section) => {
-        section.subsection.forEach((subsection) => {
-          subsection.items.forEach((item) => {
-            if(item.summary) {
+      if (!this.crf || !this.crf.sections) return dataFields;
+      this.crf.sections.forEach(section => {
+        section.subsection.forEach(subsection => {
+          subsection.items.forEach(item => {
+            if (item.summary) {
               dataFields.push({
                 key: item.name,
                 label: item.label,
@@ -89,7 +94,7 @@ export default {
           });
         });
       });
-      dataFields.push("Settings")
+      dataFields.push("Settings");
       return dataFields;
     }
   },
@@ -100,7 +105,7 @@ export default {
   },
   methods: {
     deletePatient(patientId) {
-      this.$store.dispatch("patients/DESTROY_PATIENT", patientId)
+      this.$store.dispatch("patients/DESTROY_PATIENT", patientId);
     }
   }
 };

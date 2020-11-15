@@ -48,17 +48,9 @@ export default {
     this.$store.dispatch("crfs/GET_CRF_PATIENT").then(() => {
       this.show = true;
       if (this.patientId !== null && this.patientId !== undefined) {
-        this.$axios
-          .get(`/data/patient/${this.patientId}/crf/${this.crf._id}`)
-          .then(payload => {
-            const tmpData = {};
-            payload.data.payload.data.forEach(item => {
-              tmpData[item.field] = {};
-              tmpData[item.field].value = item.value;
-              tmpData[item.field]._id = item._id;
-            });
-            this.data = tmpData;
-          });
+        this.$axios.get(`/patient/${this.patientId}/full`).then(payload => {
+          this.data = payload.data.payload;
+        });
       }
     });
   },
@@ -66,15 +58,18 @@ export default {
     onSubmit() {
       if (this.patientId !== null && this.patientId !== undefined) {
         this.$axios
-          .post(`/data/patient/${this.patientId}/crf/${this.crf._id}/full`, {
-            data: this.data,
-            formsId: this.crf.formsId
-          })
+          .put(
+            `/data/patient/${this.patientId}/crf/${this.data.recordId}/full`,
+            {
+              data: this.data,
+              formsId: this.crf.formsId
+            }
+          )
           .then(() => {
             this.$router.push({ name: "Patients" });
           });
       } else {
-        this.$axios.post("patient/").then(({data}) => {
+        this.$axios.post("patient/").then(({ data }) => {
           this.$axios
             .post(
               `/data/patient/${data.payload._id}/crf/${this.crf._id}/full`,

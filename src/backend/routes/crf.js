@@ -254,27 +254,22 @@ router.get("/api/crf/", (req, res, next) => {
 });
 
 router.get("/api/crf/patient", (req, res, next) => {
-  db.crfs.findOne(
-    {
-      name: "Patient"
-    },
-    (err, doc) => {
-      if (err) {
-        console.log("error", err);
-        res.json({
-          success: false,
-          error: err,
-          payload: null
-        });
-      } else {
-        res.json({
-          success: true,
-          error: false,
-          payload: doc
-        });
-      }
+  utils.getPatientCRF((err, doc) => {
+    if (err) {
+      console.log("error", err);
+      res.json({
+        success: false,
+        error: err,
+        payload: null
+      });
+    } else {
+      res.json({
+        success: true,
+        error: false,
+        payload: doc
+      });
     }
-  );
+  });
 });
 
 router.get("/api/crf/:crfId", (req, res, next) => {

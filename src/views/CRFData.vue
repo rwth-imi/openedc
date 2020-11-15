@@ -104,7 +104,7 @@ export default {
                 crfId: crfItem._id,
                 new: this.new,
                 section: index,
-                crfDataId: this.record.id
+                crfRecordId: this.record.id
               },
               hash: `${sectionItem.name}`
             }
@@ -144,7 +144,7 @@ export default {
     this.fetchData(
         this.$route.params.crfId,
         this.patientId,
-        this.$route.params.crfDataId
+        this.$route.params.crfRecordId
     ).then(() => {
       this.createDataSections();
       this.$store.dispatch("crfs/GET_CRFS");
@@ -166,7 +166,7 @@ export default {
         crfId: this.$route.params.crfId
       };
     },
-    fetchData(crfId, patientId, crfDataId) {
+    fetchData(crfId, patientId, crfRecordId) {
       return this.$store.dispatch("crfs/GET_CRF", crfId).then(() => {
         this.$axios
           .get(`/data/patient/${patientId}/crf/${crfId}/records`)
@@ -185,11 +185,11 @@ export default {
           });
         this.resetData();
         if (!this.new) {
-          if (crfDataId) {
-            this.record.id = crfDataId;
+          if (crfRecordId) {
+            this.record.id = crfRecordId;
             this.record.crfId = crfId;
             this.$axios
-              .get(`/data/patient/${patientId}/crfData/${crfDataId}`)
+              .get(`/data/patient/${patientId}/crfData/${crfRecordId}`)
               .then(payload => {
                 const tmpData = {};
                 payload.data.payload.data.forEach(item => {
@@ -203,7 +203,7 @@ export default {
             return this.$axios
               .get(`/data/patient/${patientId}/crf/${crfId}`)
               .then(payload => {
-                this.record.id = payload.data.payload.crfDataId;
+                this.record.id = payload.data.payload.crfRecordId;
                 if (payload.data.payload.crfId !== crfId) {
                   return this.$store
                     .dispatch("crfs/GET_CRF", payload.data.payload.crfId)
@@ -274,9 +274,9 @@ export default {
           });
       }
     },
-    refetch(crfId, patientId, crfDataId) {
+    refetch(crfId, patientId, crfRecordId) {
       this.show = false;
-      return this.fetchData(crfId, patientId, crfDataId).then(() => {
+      return this.fetchData(crfId, patientId, crfRecordId).then(() => {
         this.show = true;
       });
     },
@@ -300,15 +300,15 @@ export default {
   },
   watch: {
     $route(to, from) {
-      let crfDataId = this.$route.params.crfDataId;
+      let crfRecordId = this.$route.params.crfRecordId;
       if (to.params.crfId === from.params.crfId) {
-        crfDataId = this.record.id;
+        crfRecordId = this.record.id;
       }
       this.show = false;
       this.section =
         this.$route.params.section >= 0 ? this.$route.params.section : null;
       this.patientId = this.$route.params.patientId;
-      this.refetch(this.$route.params.crfId, this.patientId, crfDataId);
+      this.refetch(this.$route.params.crfId, this.patientId, crfRecordId);
     }
   }
 };

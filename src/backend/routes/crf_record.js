@@ -276,7 +276,7 @@ router.get("/api/data/patient/:patientId/crf/:crfId", (req, res) => {
                         error: false,
                         payload: {
                           crfId: docs[0].crfId,
-                          crfDataId: docs[0]._id,
+                          crfRecordId: docs[0]._id,
                           data: data
                         }
                       });
@@ -291,10 +291,10 @@ router.get("/api/data/patient/:patientId/crf/:crfId", (req, res) => {
   );
 });
 
-router.get("/api/data/patient/:patientId/crfData/:crfDataId", (req, res) => {
+router.get("/api/data/patient/:patientId/crfData/:crfRecordId", (req, res) => {
   db.crfRecord.findOne(
     {
-      _id: req.params.crfDataId
+      _id: req.params.crfRecordId
     },
     (err, doc) => {
       db.data.find(
@@ -326,10 +326,10 @@ router.get("/api/data/patient/:patientId/crfData/:crfDataId", (req, res) => {
   );
 });
 
-router.put("/api/data/patient/:patientId/crf/:crfDataId/full", (req, res) => {
+router.put("/api/data/patient/:patientId/crf/:crfRecordId/full", (req, res) => {
   db.crfRecord.findOne(
     {
-      _id: req.params.crfDataId
+      _id: req.params.crfRecordId
     },
     (err, doc) => {
       if (err || doc === null) {

@@ -142,19 +142,19 @@ export default {
     }
 
     this.fetchData(
-        this.$route.params.crfId,
-        this.patientId,
-        this.$route.params.crfRecordId
+      this.$route.params.crfId,
+      this.patientId,
+      this.$route.params.crfRecordId
     ).then(() => {
       this.createDataSections();
       this.$store.dispatch("crfs/GET_CRFS");
       this.show = true;
     });
     this.$axios
-        .get("/data/patient/" + this.patientId + "/crfs")
-        .then(payload => {
-          this.crfData = payload.data.payload;
-        });
+      .get("/data/patient/" + this.patientId + "/crfs")
+      .then(payload => {
+        this.crfData = payload.data.payload;
+      });
   },
   methods: {
     resetData() {
@@ -261,8 +261,13 @@ export default {
             `/data/patient/${this.patientId}/crf/${this.$route.params.crfId}/full`,
             { data: this.data, formsId: this.crf.formsId }
           )
-          .then(() => {
-            console.log("saved!");
+          .then(({ data }) => {
+            this.record = {
+              id: data.payload[0].recordId,
+              crfId: this.crf._id
+            };
+            this.new = false;
+            this.refetch(this.crf._id, this.patientId, this.record.id);
           });
       } else {
         this.$axios
@@ -271,6 +276,7 @@ export default {
           })
           .then(() => {
             console.log("updated!");
+            // Todo: toast or notification
           });
       }
     },

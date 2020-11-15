@@ -314,6 +314,7 @@ export default {
       this.section =
         this.$route.params.section >= 0 ? this.$route.params.section : null;
       this.patientId = this.$route.params.patientId;
+      this.new = false;
       this.refetch(this.$route.params.crfId, this.patientId, crfRecordId);
     }
   }

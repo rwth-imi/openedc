@@ -252,9 +252,9 @@ router.get("/api/data/patient/:patientId/crf/:crfId", (req, res) => {
               });
             } else {
               if (docs.length === 0) {
-                res.status(404).json({
-                  success: false,
-                  error: "No record found",
+                res.json({
+                  success: true,
+                  error: false,
                   payload: null
                 });
               } else {

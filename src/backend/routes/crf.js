@@ -92,7 +92,7 @@ function saveEditCRF(formsId, crf, user, errorCB, successCB, del = false) {
         errorCB(err);
       } else {
         const version = count + 1;
-        if (!crf.version || version < crf.version) crf.version = version; //Todo: Warning that wrong version
+        if (!crf.version || version > crf.version) crf.version = version; //Todo: Warning that wrong version
         crf.formsId = formsId;
         db.crfs.insert(crf, function(err, inserted) {
           if (err) {

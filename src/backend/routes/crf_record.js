@@ -52,7 +52,7 @@ function putData(dataId, patientId, recordId, field, value, user, callback) {
 router.post("/api/data/patient/:patientId/crf/:crfId/full", (req, res) => {
   db.crfRecord.count(
     {
-      crfId: req.params.crfId,
+      formsId: req.body.formsId,
       patientId: req.params.patientId
     },
     (err, count) => {

@@ -178,8 +178,6 @@ router.get("/api/data/patient/:patientId/crf/:crfId/records", (req, res) => {
           payload: null
         });
       } else {
-        const versions = [];
-
         const searchCrfId = doc.formsId;
         const crfIds = [searchCrfId];
         // crfId is the newest version
@@ -195,7 +193,8 @@ router.get("/api/data/patient/:patientId/crf/:crfId/records", (req, res) => {
               {
                 crfId: {
                   $in: crfIds
-                }
+                },
+                patientId: patientId
               },
               (err, crfDataVersion) => {
                 const resObj = [];

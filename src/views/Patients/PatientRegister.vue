@@ -15,6 +15,8 @@
         :crf-id="crf.newestVersion || crf._id"
         :multiple-records="crf.multipleRecords"
         @submitted="onSubmit"
+        :back="true"
+        @onBack="onBack"
       ></ActionBar>
     </b-col>
   </div>
@@ -45,8 +47,8 @@ export default {
   },
   created() {
     this.patientId = this.$route.params.patientId;
-    this.$store.dispatch("crfs/GET_CRF_PATIENT").then((status) => {
-      if(status.success) {
+    this.$store.dispatch("crfs/GET_CRF_PATIENT").then(status => {
+      if (status.success) {
         this.show = true;
         if (this.patientId !== null && this.patientId !== undefined) {
           this.$axios.get(`/patient/${this.patientId}/full`).then(payload => {
@@ -54,7 +56,7 @@ export default {
           });
         }
       } else {
-        if( status.errorCode === 404) {
+        if (status.errorCode === 404) {
           this.$axios.post("patient/").then(({ data }) => {
             this.$router.push({ name: "Patients" });
           });
@@ -98,6 +100,9 @@ export default {
       this.$nextTick(() => {
         this.show = true;
       });
+    },
+    onBack() {
+      this.$router.push({ name: "Patients" });
     }
   }
 };

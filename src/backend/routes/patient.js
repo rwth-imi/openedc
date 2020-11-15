@@ -93,12 +93,20 @@ router.get("/api/patient/full", (req, res, next) => {
             });
           })
           .catch(err => {
-            console.log("error", err);
-            res.json({
-              success: false,
-              error: err,
-              payload: null
-            });
+            if(patients.length >= 0) {
+              res.json({
+                success: true,
+                error: false,
+                payload: patients
+              });
+            } else {
+              console.log("error", err);
+              res.json({
+                success: false,
+                error: err,
+                payload: null
+              });
+            }
           });
       }
     }

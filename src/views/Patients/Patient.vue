@@ -74,7 +74,7 @@ export default {
       patientId: null
     };
   },
-  mounted() {
+  created() {
     if(!this.patientId && this.$route.params.patientId) this.patientId = this.$route.params.patientId;
     this.$store.dispatch("crfs/GET_CRFS");
     this.$store.dispatch("patients/GET_PATIENT", this.patientId);

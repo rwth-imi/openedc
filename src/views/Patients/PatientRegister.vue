@@ -45,12 +45,20 @@ export default {
   },
   created() {
     this.patientId = this.$route.params.patientId;
-    this.$store.dispatch("crfs/GET_CRF_PATIENT").then(() => {
-      this.show = true;
-      if (this.patientId !== null && this.patientId !== undefined) {
-        this.$axios.get(`/patient/${this.patientId}/full`).then(payload => {
-          this.data = payload.data.payload;
-        });
+    this.$store.dispatch("crfs/GET_CRF_PATIENT").then((status) => {
+      if(status.success) {
+        this.show = true;
+        if (this.patientId !== null && this.patientId !== undefined) {
+          this.$axios.get(`/patient/${this.patientId}/full`).then(payload => {
+            this.data = payload.data.payload;
+          });
+        }
+      } else {
+        if( status.errorCode === 404) {
+          this.$axios.post("patient/").then(({ data }) => {
+            this.$router.push({ name: "Patients" });
+          });
+        }
       }
     });
   },

@@ -77,8 +77,17 @@ export default {
       return Vue.axios.get('/crf/patient')
           .then(payload => {
             context.commit("SET_CRF", payload.data.payload, false)
+            return {
+              success: true
+            }
           })
-          .catch(error => console.log(error))
+          .catch(error => {
+            return {
+              success: false,
+              errorCode: error.response.status,
+              error: error
+            };
+          })
     },
     PUT_CRF(context, crf) {
       return Vue.axios.put('/crf/' + crf.formsId, crf)

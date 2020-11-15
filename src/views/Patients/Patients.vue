@@ -80,7 +80,7 @@ export default {
     },
     fields() {
       const dataFields = [];
-      if (!this.crf || !this.crf.sections) return dataFields;
+      if (!this.crf || !this.crf.sections || this.crf.name !== "Patient") return [{ key: "_id", label: "ID", sortable: true}, "Settings"];
       this.crf.sections.forEach(section => {
         section.subsection.forEach(subsection => {
           subsection.items.forEach(item => {

@@ -257,7 +257,7 @@ router.get("/api/crf/patient", (req, res, next) => {
   utils.getPatientCRF((err, doc) => {
     if (err) {
       console.log("error", err);
-      res.json({
+      res.status(404).json({
         success: false,
         error: err,
         payload: null

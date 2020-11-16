@@ -1,7 +1,7 @@
 <template>
   <div v-if="section === null">
     <div v-for="(sectionItem, section) in crf.sections" :key="section">
-      <h2>Section: {{ sectionItem.title }}</h2>
+      <h2>{{ $t("section") }}: {{ sectionItem.title }}</h2>
       <hr class="section" />
       <div
         v-for="subsection in crf.sections[section].subsection"

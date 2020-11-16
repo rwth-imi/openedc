@@ -22,7 +22,7 @@
           @submitted="submit"
           @changedRecord="changeRecord"
         ></ActionBar>
-        <h1>CRF: {{ crf.name }}</h1>
+        <h1>{{ $t("crf") }}: {{ crf.name }}</h1>
         <CRF
           :crf-id="crf._id"
           :data="data"
@@ -50,8 +50,6 @@ export default {
       section: 0,
       sections: [],
       patientId: null,
-      date: "Wed Sep 30 2020",
-      dates: ["Wed Sep 30 2020", "Thu Sep 17 2020", "Tue Sep 1 2020"],
       show: false,
       new: true,
       crfData: [],
@@ -69,11 +67,11 @@ export default {
       const ret = [
         {
           header: true,
-          title: "Patient",
+          title: this.$t("Patient"),
           hiddenOnCollapse: true
         },
         {
-          title: "Number: " + this.patientId,
+          title: "ID: " + this.patientId,
           href: {
             name: "Patient",
             query: { patientId: this.patientId },
@@ -88,7 +86,7 @@ export default {
         },
         {
           header: true,
-          title: "CRFs",
+          title: this.$t("CRFs"),
           hiddenOnCollapse: true
         }
       ];

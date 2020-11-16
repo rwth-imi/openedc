@@ -10,7 +10,12 @@
             :id="options.name"
             v-model="localValue"
             :options="options.choices"
-          ></b-form-select>
+          >
+            <template v-if="!this.options.choices.some(e => e.value === null)" #first>
+              <b-form-select-option :value="null" disabled>-- {{ $t("selectOption") }} --</b-form-select-option>
+            </template>
+          </b-form-select>
+
         </b-col>
         <b-col sm="3">
           {{ options.notes }}
@@ -24,18 +29,10 @@
 export default {
   name: "SingleSelectField",
   props: ["options", "value"],
-  created() {
-    if (!this.options.choices.some(e => e.value === null)) {
-      this.options.choices.push({
-        value: null,
-        text: "Please select an option"
-      });
-    }
-  },
   computed: {
     localValue: {
       get() {
-        return this.value ? this.value.value : this.options.defaultValue;
+        return this.value ? this.value.value : (this.options.defaultValue || null);
       },
       set(newValue) {
         this.$emit("changed", newValue);

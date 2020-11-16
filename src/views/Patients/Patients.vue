@@ -1,19 +1,19 @@
 <template>
   <div class="mainPage">
-    <h1>Patients</h1>
+    <h1>{{ $t("Patients")}}</h1>
     <div class="" align="right">
-      <b-button pill variant="success" to="/patients/register">Add</b-button>
+      <b-button pill variant="success" to="/patients/register">{{ $t("Add") }}</b-button>
     </div>
     <b-row class="my-1">
       <b-col sm="2">
-        <label for="search">Search:</label>
+        <label for="search">{{ $t("Search") }}:</label>
       </b-col>
       <b-col sm="10">
         <b-form-input
           id="search"
           v-model="search"
           size="sm"
-          placeholder="Search Patient by id"
+          :placeholder="$t('searchBy', {what: $t('Patient'), by: $t('id')})"
         ></b-form-input>
       </b-col>
     </b-row>
@@ -26,7 +26,7 @@
             name: 'Patient',
             params: { patientId: data.item._id }
           }"
-          >Select</b-button
+          >{{ $t("Select")}}</b-button
         >
         <b-button
           pill
@@ -35,14 +35,14 @@
             name: 'PatientRegister',
             params: { patientId: data.item._id }
           }"
-          >Edit</b-button
+          >{{ $t("Edit")}}</b-button
         >
-        <b-button pill variant="outline-success">Export</b-button>
+        <b-button pill variant="outline-success">{{ $t('Export')}}</b-button>
         <b-button
           pill
           variant="outline-danger"
           @click="deletePatient(data.item._id)"
-          >Delete</b-button
+          >{{ $t('Delete')}}</b-button
         >
       </template>
     </b-table>
@@ -80,7 +80,7 @@ export default {
     },
     fields() {
       const dataFields = [];
-      if (!this.crf || !this.crf.sections || this.crf.name !== "Patient") return [{ key: "_id", label: "ID", sortable: true}, "Settings"];
+      if (!this.crf || !this.crf.sections || this.crf.name !== "Patient") return [{ key: "_id", label: "ID", sortable: true}, this.$t("Settings")];
       this.crf.sections.forEach(section => {
         section.subsection.forEach(subsection => {
           subsection.items.forEach(item => {
@@ -94,7 +94,7 @@ export default {
           });
         });
       });
-      dataFields.push("Settings");
+      dataFields.push(this.$t("Settings"));
       return dataFields;
     }
   },

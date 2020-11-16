@@ -10,11 +10,11 @@
 
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
-            <b-nav-item to="/">Home</b-nav-item>
-            <b-nav-item to="/patients">Patients</b-nav-item>
-            <b-nav-item to="/crfs">CRFs</b-nav-item>
-            <b-nav-item to="/about">About</b-nav-item>
-            <b-nav-item to="/help">Help</b-nav-item>
+            <b-nav-item to="/">{{ $t("home.title") }}</b-nav-item>
+            <b-nav-item to="/patients">{{ $t("Patients") }}</b-nav-item>
+            <b-nav-item to="/crfs">{{ $t("CRFs") }}</b-nav-item>
+            <b-nav-item to="/about">{{ $t("Config") }}</b-nav-item>
+            <b-nav-item to="/help">{{ $t("help.title") }}</b-nav-item>
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->

@@ -1,11 +1,56 @@
 {
-  "message": "hello i18n !!",
   "languages": {
     "en": "English",
     "de": "German"
   },
   "home": {
+    "title": "Home",
     "welcome": "Welcome to the CRF Managing Tool",
     "message": "With this tool you can create, edit, fill out and export a CRF."
-  }
+  },
+  "selectOption": "Please select an option",
+  "selectRecord": "Please select a record",
+  "record": "Record",
+  "Reset": "Reset",
+  "New": "New",
+  "Add": "Add",
+  "Save": "Save",
+  "Verify": "Verify",
+  "Back": "Back",
+  "Edit": "Edit",
+  "NewRecord": "New Record",
+  "Export": "Export",
+  "Delete": "Delete",
+  "Select": "Select",
+  "Section": "Section",
+  "Patient": "Patient",
+  "Patients": "Patients",
+  "EditCRF": "Edit CRF",
+  "CreateCRF": "Create CRF",
+  "Search": "Search",
+  "searchBy": "Search {what} by {by}",
+  "crf": "CRF",
+  "CRFs": "CRFs",
+  "name": "name",
+  "Name": "Name",
+  "Status": "Status",
+  "Settings": "Settings",
+  "EditPatient": "Edit Patient",
+  "Register Patient": "Register Patient",
+  "id": "id",
+  "crfDetail": "CRF Detail",
+  "crfOverview": "CRF Overview",
+  "Count": "Count",
+  "createdAt": "createdAt",
+  "Format": "Format",
+  "ChooseFile": "Choose a file or drop it here...",
+  "UploadFile": "Upload File",
+  "DropFile": "Drop File here...",
+  "Log": "Log",
+  "SelectCRFToUpload": "Select crfs to upload",
+  "help": {
+    "message": "This is a help page",
+    "title": "Help"
+  },
+  "Config": "Config"
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="mainPage">
-    <h1 v-if="patientId">Edit Patient</h1>
-    <h1 v-else>Register Patient</h1>
+    <h1 v-if="patientId">{{ $t("EditPatient") }}</h1>
+    <h1 v-else>{{ $t("Register Patient")}}</h1>
     <b-col sm="12" class="mainPage" v-if="show">
       <CRF
         :crf-id="crf._id"

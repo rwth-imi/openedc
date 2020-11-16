@@ -1,15 +1,15 @@
 <template>
   <div class="mainPage">
-    <h1>Patient: {{ patientId }}</h1>
+    <h1>{{ $t("Patient") }}: {{ patientId }}</h1>
     <b-row class="my-1">
       <b-col sm="2">
-        <label for="input-small">Search:</label>
+        <label for="input-small">{{ $t("Search")}}:</label>
       </b-col>
       <b-col sm="10">
         <b-form-input
           v-model="search"
           size="sm"
-          placeholder="Search CRF by name"
+          :placeholder="$t('searchBy', { what: $t('crf'), by: $t('name')})"
         ></b-form-input>
       </b-col>
     </b-row>
@@ -30,7 +30,7 @@
               name: 'CRFData',
               params: { patientId: patientId, crfId: data.item._id, new: false }
             }"
-            >Edit</b-button
+            >{{ $t("Edit")}}</b-button
           >
           <b-button
             pill
@@ -39,10 +39,10 @@
               name: 'CRFData',
               params: { patientId: patientId, crfId: data.item._id, new: true }
             }"
-            >New Record</b-button
+            >{{ $t("New Record")}}</b-button
           >
-          <b-button pill variant="outline-success">Export</b-button>
-          <b-button pill variant="outline-danger">Delete</b-button>
+          <b-button pill variant="outline-success">{{ $t("Export")}}</b-button>
+          <b-button pill variant="outline-danger">{{ $t("Delete")}}</b-button>
         </div>
       </template>
     </b-table>
@@ -60,15 +60,15 @@ export default {
       fields: [
         {
           key: "crf",
-          label: "CRF",
+          label: this.$t("crf"),
           sortable: true
         },
         {
           key: "status",
-          label: "Status",
+          label: this.$t("Status"),
           sortable: true
         },
-        "Settings"
+        this.$t("Settings")
       ],
       crfData: [],
       patientId: null
@@ -86,13 +86,15 @@ export default {
   },
   methods: {
     getStatus(formsId, id) {
-      if (this.filled(formsId, id)) {
-        return "begonnen";
+      const filtered = this.crfData.filter(elem => elem.formsId === formsId);
+      if (filtered.length > 0) {
+        return filtered.length + " " + this.$t("filled");
       } else {
-        return "nicht begonnen";
+        return this.$t("notStarted");
       }
     },
     filled(formsId, id) {
+      console.log('filled', this.crfData, formsId, id)
       return this.crfData.some(
         elem => elem.formsId === formsId || elem.crfId === id //TODO nach || nur abwärtskompatibilität
       );

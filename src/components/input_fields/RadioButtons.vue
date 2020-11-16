@@ -18,7 +18,7 @@
           </b-form-group>
         </b-col>
         <b-col sm="1">
-          <b-button type="reset" variant="danger" @click="resetRadio()">Reset</b-button>
+          <b-button type="reset" variant="danger" @click="resetRadio()">{{ $t("Reset") }}</b-button>
         </b-col>
         <b-col sm="3">
           {{ options.notes }}

@@ -1,8 +1,8 @@
 <template>
   <div class="mainPage">
-    <h1>CRFs Overview</h1>
+    <h1>{{ $t("crfOverview") }}</h1>
     <div class="" align="right">
-      <b-button pill variant="success" :to="{name: 'CRFUpload'}">Add</b-button>
+      <b-button pill variant="success" :to="{name: 'CRFUpload'}">{{ $t("Add") }}</b-button>
     </div>
     <b-table striped hover :items="crfs" :fields="fields">
       <template v-slot:cell(name)="data">
@@ -18,9 +18,9 @@
         {{ (new Date(data.value)) | formatDate }}
       </template>
       <template v-slot:cell(settings)="data">
-        <b-button pill variant="outline-success" :to="{ name: 'CRFUpload', params: {formsId: data.item.formsId }}">Edit</b-button>
-        <b-button pill variant="outline-success">Export</b-button>
-        <b-button pill variant="outline-danger" @click="deleteCRF(data.item.formsId)">Delete</b-button>
+        <b-button pill variant="outline-success" :to="{ name: 'CRFUpload', params: {formsId: data.item.formsId }}">{{ $t("Edit") }}</b-button>
+        <b-button pill variant="outline-success">{{ $t("Export") }}</b-button>
+        <b-button pill variant="outline-danger" @click="deleteCRF(data.item.formsId)">{{ $t("Delete") }}</b-button>
       </template>
     </b-table>
   </div>
@@ -52,18 +52,20 @@ export default {
       fields: [
         {
           key: "name",
+          label: this.$t("Name"),
           sortable: true
         },
         {
           key: "countFilled",
-          label: "Count",
+          label: this.$t("Count"),
           sortable: true
         },
         {
           key: "createdAt",
+          label: this.$t("createdAt"),
           sortable: true
         },
-        "Settings"
+        this.$t("Settings")
       ]
     };
   }

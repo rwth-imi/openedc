@@ -1,7 +1,7 @@
 <template>
   <b-row>
     <b-col>
-      <h1>CRF Detail: {{ crf.name }}</h1>
+      <h1>{{ $t("crfDetail") }}: {{ crf.name }}</h1>
       <CRF
         :crf-id="crf._id"
         :data="data"

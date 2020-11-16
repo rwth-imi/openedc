@@ -2,7 +2,7 @@
   <b-row class="actionBar">
     <b-col sm="3">
       <div v-if="multipleRecords">
-        <label :for="'recordSelect'">Record:</label>
+        <label :for="'recordSelect'">{{ $t("Record")}}:</label>
       </div>
     </b-col>
     <b-col sm="3">
@@ -17,19 +17,19 @@
           <!-- This slot appears above the options from 'options' prop -->
           <template v-slot:first>
             <b-form-select-option :value="null" disabled
-              >-- Please select a record --</b-form-select-option
+              >-- {{ $t("selectRecord")}} --</b-form-select-option
             >
           </template>
           <!-- These options will appear after the ones from 'options' prop -->
           <b-form-select-option :value="{ id: 'new', crfId: crfId }"
-            >New</b-form-select-option
+            >{{ $t("New") }}</b-form-select-option
           >
         </b-form-select>
       </div>
     </b-col>
     <b-col sm="6" class="actions">
-      <b-button type="submit" variant="primary" @click="submit">Save</b-button>
-      <b-button v-if="back" variant="danger" @click="onBack">Back</b-button>
+      <b-button type="submit" variant="primary" @click="submit">{{ $t("Save") }}</b-button>
+      <b-button v-if="back" variant="danger" @click="onBack">{{ $t("Back") }}</b-button>
     </b-col>
   </b-row>
 </template>

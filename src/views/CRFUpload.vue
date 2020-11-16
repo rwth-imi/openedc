@@ -1,52 +1,51 @@
 <template>
   <div class="mainPage">
-    <h1 v-if="formsId">Edit CRF</h1>
-    <h1 v-else>Create CRF</h1>
+    <h1 v-if="formsId">{{ $t("EditCRF") }}</h1>
+    <h1 v-else>{{ $t("CreateCRF") }}</h1>
     <div>
       <b-card bg-variant="light">
         <b-form @submit="onSubmit" @reset="onReset" v-if="show">
           <b-form-group
             label-cols-lg="3"
-            label="Create CRF"
+            :label="$t('CreateCRF')"
             label-size="lg"
             label-class="font-weight-bold pt-0"
             class="mb-0"
           >
             <b-form-group
               label-cols-sm="3"
-              label="Format:"
+              :label="$t('Format')"
               label-align-sm="right"
             >
               <b-form-select
                 v-model="form.format"
-                placeholder="Choose a file or drop it here..."
                 name="format"
                 :options="formatOptions"
               ></b-form-select>
             </b-form-group>
             <b-form-group
               label-cols-sm="3"
-              label="Upload File:"
+              :label="$t('UploadFile')"
               label-align-sm="right"
               label-for="nested-file"
             >
               <b-form-file
                 v-model="form.file"
                 :state="Boolean(form.file)"
-                placeholder="Choose a file or drop it here..."
-                drop-placeholder="Drop file here..."
+                :placeholder="$t('ChooseFile')"
+                :drop-placeholder="$t('DropFile')"
                 name="filename"
               ></b-form-file>
             </b-form-group>
           </b-form-group>
-          <b-button type="submit" variant="primary">Verify</b-button>
-          <b-button type="reset" variant="danger">Reset</b-button>
+          <b-button type="submit" variant="primary">{{ $t('Verify') }}</b-button>
+          <b-button type="reset" variant="danger">{{  $t('Reset') }}</b-button>
         </b-form>
       </b-card>
       <b-card bg-variant="light">
         <b-row>
           <b-col sm="3">
-            <h2>Log:</h2>
+            <h2>{{ $t('Log') }}:</h2>
           </b-col>
           <b-col sm="9">
             <div class="log" v-for="(line, index) in log" :key="index">
@@ -60,10 +59,10 @@
       <b-card bg-variant="light">
         <b-row>
           <b-col sm="3">
-            <h2>CRFs:</h2>
+            <h2>{{ $t('CRFs') }}:</h2>
           </b-col>
           <b-col sm="9">
-            <b-form-group class="log" label="Select crfs to upload">
+            <b-form-group class="log" :label="$t('SelectCRFToUpload')">
               <b-form-checkbox
                 v-for="crf in crfs"
                 v-model="selected"
@@ -81,9 +80,9 @@
         variant="primary"
         :disabled="!saveAllowed"
         @click="onSave()"
-        >Save</b-button
+        >{{ $t("Save") }}</b-button
       >
-      <b-button variant="danger" @click="goBack()">Back</b-button>
+      <b-button variant="danger" @click="goBack()">{{ $t("Back") }}</b-button>
     </div>
   </div>
 </template>

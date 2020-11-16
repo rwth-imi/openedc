@@ -50,7 +50,9 @@
           </b-col>
           <b-col sm="9">
             <div class="log" v-for="(line, index) in log" :key="index">
-              <span :class="line.type">{{ line.type | typeFilter}}: {{ line.msg }}</span>
+              <span :class="line.type"
+                >{{ line.type | typeFilter }}: {{ line.msg }}</span
+              >
             </div>
           </b-col>
         </b-row>
@@ -63,10 +65,10 @@
           <b-col sm="9">
             <b-form-group class="log" label="Select crfs to upload">
               <b-form-checkbox
-                  v-for="crf in crfs"
-                  v-model="selected"
-                  :key="crf.name"
-                  :value="crf"
+                v-for="crf in crfs"
+                v-model="selected"
+                :key="crf.name"
+                :value="crf"
               >
                 {{ crf.name }}
               </b-form-checkbox>
@@ -158,12 +160,12 @@ export default {
         const send = {
           crf: crf
         };
-        if(this.formsId === null || this.formsId === undefined) {
+        if (this.formsId === null || this.formsId === undefined) {
           this.axios.post("crf/", send).then(() => {
             console.log("saved");
             this.$router.push("/crfs");
           });
-        }else {
+        } else {
           this.axios.put("crf/" + this.formsId, send).then(() => {
             console.log("edited");
             this.$router.push("/crfs");
@@ -178,7 +180,7 @@ export default {
   },
   filters: {
     typeFilter: function(value) {
-      if(value) {
+      if (value) {
         return value[0].toUpperCase() + value.slice(1);
       }
       return value;
@@ -188,7 +190,6 @@ export default {
 </script>
 
 <style scoped>
-
 .log {
   text-align: left;
 }

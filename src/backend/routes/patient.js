@@ -142,7 +142,7 @@ router.get("/api/patient/:patientId/full", (req, res, next) => {
   utils.getPatientCRFForPatientId(req.params.patientId, true, (err, data) => {
     if (err) {
       console.log("error", err);
-      res.json({
+      res.status(404).json({
         success: false,
         error: err,
         payload: null

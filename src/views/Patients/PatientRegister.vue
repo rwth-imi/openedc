@@ -39,7 +39,8 @@ export default {
       sections: [],
       data: {},
       patientId: null,
-      show: false
+      show: false,
+      new: false
     };
   },
   computed: {
@@ -51,9 +52,17 @@ export default {
       if (status.success) {
         this.show = true;
         if (this.patientId !== null && this.patientId !== undefined) {
-          this.$axios.get(`/patient/${this.patientId}/full`).then(payload => {
-            this.data = payload.data.payload;
-          });
+          this.$axios
+            .get(`/patient/${this.patientId}/full`)
+            .then(payload => {
+              this.data = payload.data.payload;
+            })
+            .catch(err => {
+              if (err.response.status === 404) {
+                this.new = true;
+                console.log("no patient record found create new one");
+              }
+            });
         }
       } else {
         if (status.errorCode === 404) {
@@ -67,18 +76,29 @@ export default {
   methods: {
     onSubmit() {
       if (this.patientId !== null && this.patientId !== undefined) {
-        this.$axios
-          .put(
-            `/data/patient/${this.patientId}/crf/${this.data.recordId}/full`,
-            {
+        if (this.new) {
+          this.$axios
+            .post(`/data/patient/${this.patientId}/crf/${this.crf._id}/full`, {
               data: this.data,
-              formsId: this.crf.formsId,
-              migrate: true
-            }
-          )
-          .then(() => {
-            this.$router.push({ name: "Patients" });
-          });
+              formsId: this.crf.formsId
+            })
+            .then(() => {
+              this.$router.push({ name: "Patients" });
+            });
+        } else {
+          this.$axios
+            .put(
+              `/data/patient/${this.patientId}/crf/${this.data.recordId}/full`,
+              {
+                data: this.data,
+                formsId: this.crf.formsId,
+                migrate: true
+              }
+            )
+            .then(() => {
+              this.$router.push({ name: "Patients" });
+            });
+        }
       } else {
         this.$axios.post("patient/").then(({ data }) => {
           this.$axios

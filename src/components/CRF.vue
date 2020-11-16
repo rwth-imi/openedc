@@ -47,7 +47,6 @@
 
 <script>
 import { mapState } from "vuex";
-import FileUploadField from "@/components/input_fields/FileUploadField.vue";
 import Checkboxes from "@/components/input_fields/Checkboxes.vue";
 import TextField from "@/components/input_fields/TextField.vue";
 import SingleSelectField from "@/components/input_fields/SingleSelectField.vue";
@@ -56,7 +55,6 @@ import TextArea from "@/components/input_fields/TextArea.vue";
 export default {
   name: "CRF",
   components: {
-    FileUploadField,
     Checkboxes,
     TextField,
     SingleSelectField,

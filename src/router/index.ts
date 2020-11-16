@@ -5,7 +5,6 @@ import Patients from "../views/Patients/Patients.vue";
 import PatientRegister from "../views/Patients/PatientRegister.vue";
 import Patient from "../views/Patients/Patient.vue";
 import CRFs from "../views/CRFsOverview.vue";
-import Test from "../views/Test.vue";
 
 Vue.use(VueRouter);
 
@@ -62,11 +61,6 @@ const routes: Array<RouteConfig> = [
     path: "/help",
     name: "Help",
     component: () => import(/* webpackChunkName: "about" */ "../views/Help.vue")
-  },
-  {
-    path: "/test",
-    name: "Test",
-    component: Test
   }
 ];
 

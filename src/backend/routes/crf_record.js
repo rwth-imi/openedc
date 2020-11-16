@@ -49,19 +49,20 @@ function putData(dataId, patientId, recordId, field, value, user, callback) {
   });
 }
 
-router.post("/api/data/patient/:patientId/crf/:crfId/full", (req, res) => {
+function saveNewRecord(patientId, crfId, formsId, user, data, callback) {
   db.crfRecord.count(
     {
-      formsId: req.body.formsId,
-      patientId: req.params.patientId
+      formsId: formsId,
+      patientId: patientId
     },
     (err, count) => {
       const number = count + 1;
       const crfInfo = {
-        formsId: req.body.formsId,
-        crfId: req.params.crfId,
-        patientId: req.params.patientId,
+        formsId: formsId,
+        crfId: crfId,
+        patientId: patientId,
         createdAt: Date.now(),
+        createdBy: user || "defaultUser",
         recordNumber: number
       };
       const errors = [];
@@ -74,14 +75,14 @@ router.post("/api/data/patient/:patientId/crf/:crfId/full", (req, res) => {
             payload: null
           });
         } else {
-          let remainCallbacks = Object.entries(req.body.data).length;
-          for (const [name, item] of Object.entries(req.body.data)) {
+          let remainCallbacks = Object.entries(data).length;
+          for (const [name, item] of Object.entries(data)) {
             insertData(
-              req.params.patientId,
+              patientId,
               inserted._id,
               name,
               item.value,
-              req.body.user,
+              user,
               (err, inserted) => {
                 if (err) {
                   errors.push(err);
@@ -91,17 +92,9 @@ router.post("/api/data/patient/:patientId/crf/:crfId/full", (req, res) => {
                 remainCallbacks--;
                 if (remainCallbacks <= 0) {
                   if (errors.length > 0) {
-                    res.json({
-                      success: false,
-                      err: errors,
-                      payload: null
-                    });
+                    callback(errors, null);
                   } else {
-                    res.json({
-                      success: true,
-                      err: false,
-                      payload: insertedObjects
-                    });
+                    callback(false, insertedObjects);
                   }
                 }
               }
@@ -109,6 +102,31 @@ router.post("/api/data/patient/:patientId/crf/:crfId/full", (req, res) => {
           }
         }
       });
+    }
+  );
+}
+
+router.post("/api/data/patient/:patientId/crf/:crfId/full", (req, res) => {
+  saveNewRecord(
+    req.params.patientId,
+    req.params.crfId,
+    req.body.formsId,
+    req.body.user || "defaultUser",
+    req.body.data,
+    (err, success) => {
+      if (err) {
+        res.json({
+          success: false,
+          err: err,
+          payload: null
+        });
+      } else {
+        res.json({
+          success: true,
+          err: false,
+          payload: success
+        });
+      }
     }
   );
 });
@@ -338,42 +356,74 @@ router.put("/api/data/patient/:patientId/crf/:crfRecordId/full", (req, res) => {
           payload: null
         });
       } else {
-        const errors = [];
-        const insertedObjects = [];
-        let remainCallbacks = Object.entries(req.body.data).length;
-        for (const [name, item] of Object.entries(req.body.data)) {
-          putData(
-            item._id,
-            req.params.patientId,
-            doc._id,
-            name,
-            item.value,
-            req.body.user,
-            (err, inserted) => {
-              if (err) {
-                errors.push(err);
-              } else {
-                insertedObjects.push(inserted);
-              }
-              remainCallbacks--;
-              if (remainCallbacks <= 0) {
-                if (errors.length > 0) {
-                  res.json({
-                    success: false,
-                    err: errors,
-                    payload: null
-                  });
-                } else {
-                  res.json({
-                    success: true,
-                    err: false,
-                    payload: insertedObjects
-                  });
+        db.forms.findOne(
+          {
+            _id: req.body.formsId
+          },
+          (err, form) => {
+            if (form.newestVersion !== doc.crfId && req.body.migrate) {
+              saveNewRecord(
+                req.params.patientId,
+                form.newestVersion,
+                form._id,
+                req.body.user || "defaultUser",
+                req.body.data,
+                (err, success) => {
+                  if (err) {
+                    res.json({
+                      success: false,
+                      err: err,
+                      payload: null
+                    });
+                  } else {
+                    res.json({
+                      success: true,
+                      err: false,
+                      payload: success
+                    });
+                  }
                 }
+              );
+            } else {
+              const errors = [];
+              const insertedObjects = [];
+              let remainCallbacks = Object.entries(req.body.data).length;
+              for (const [name, item] of Object.entries(req.body.data)) {
+                putData(
+                  item._id,
+                  req.params.patientId,
+                  doc._id,
+                  name,
+                  item.value,
+                  req.body.user,
+                  (err, inserted) => {
+                    if (err) {
+                      errors.push(err);
+                    } else {
+                      insertedObjects.push(inserted);
+                    }
+                    remainCallbacks--;
+                    if (remainCallbacks <= 0) {
+                      if (errors.length > 0) {
+                        res.json({
+                          success: false,
+                          err: errors,
+                          payload: null
+                        });
+                      } else {
+                        res.json({
+                          success: true,
+                          err: false,
+                          payload: insertedObjects
+                        });
+                      }
+                    }
+                  }
+                );
               }
             }
-          );
-        }
+          }
+        );
       }
     }
   );

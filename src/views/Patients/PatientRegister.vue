@@ -72,7 +72,8 @@ export default {
             `/data/patient/${this.patientId}/crf/${this.data.recordId}/full`,
             {
               data: this.data,
-              formsId: this.crf.formsId
+              formsId: this.crf.formsId,
+              migrate: true
             }
           )
           .then(() => {

@@ -167,58 +167,35 @@ export default {
       };
     },
     fetchData(crfId, patientId, crfRecordId) {
-      return this.$store.dispatch("crfs/GET_CRF", crfId).then(() => {
-        this.$axios
-          .get(`/data/patient/${patientId}/crf/${crfId}/records`)
-          .then(payload => {
-            this.records = [];
-            payload.data.payload.forEach(rec => {
-              const date = this.$options.filters.formatDatetime(rec.date);
-              this.records.push({
-                value: {
-                  id: rec.id,
-                  crfId: rec.crfId
-                },
-                text: date
+      return this.$store
+        .dispatch("crfs/GET_CRF", {
+          crfId: crfId,
+          include: true
+        })
+        .then(() => {
+          this.$axios
+            .get(`/data/patient/${patientId}/crf/${crfId}/records`)
+            .then(payload => {
+              this.records = [];
+              payload.data.payload.forEach(rec => {
+                const date = this.$options.filters.formatDatetime(rec.date);
+                this.records.push({
+                  value: {
+                    id: rec.id,
+                    crfId: rec.crfId
+                  },
+                  text: date
+                });
               });
             });
-          });
-        this.resetData();
-        if (!this.new) {
-          if (crfRecordId) {
-            this.record.id = crfRecordId;
-            this.record.crfId = crfId;
-            this.$axios
-              .get(`/data/patient/${patientId}/crfData/${crfRecordId}`)
-              .then(payload => {
-                const tmpData = {};
-                payload.data.payload.data.forEach(item => {
-                  tmpData[item.field] = {};
-                  tmpData[item.field].value = item.value;
-                  tmpData[item.field]._id = item._id;
-                });
-                this.data = tmpData;
-              });
-          } else {
-            return this.$axios
-              .get(`/data/patient/${patientId}/crf/${crfId}`)
-              .then(payload => {
-                this.record.id = payload.data.payload.crfRecordId;
-                if (payload.data.payload.crfId !== crfId) {
-                  return this.$store
-                    .dispatch("crfs/GET_CRF", payload.data.payload.crfId)
-                    .then(() => {
-                      this.record.crfId = payload.data.payload.crfId;
-                      const tmpData = {};
-                      payload.data.payload.data.forEach(item => {
-                        tmpData[item.field] = {};
-                        tmpData[item.field].value = item.value;
-                        tmpData[item.field]._id = item._id;
-                      });
-                      this.data = tmpData;
-                    });
-                } else {
-                  this.record.crfId = payload.data.payload.crfId;
+          this.resetData();
+          if (!this.new) {
+            if (crfRecordId) {
+              this.record.id = crfRecordId;
+              this.record.crfId = crfId;
+              this.$axios
+                .get(`/data/patient/${patientId}/crfData/${crfRecordId}`)
+                .then(payload => {
                   const tmpData = {};
                   payload.data.payload.data.forEach(item => {
                     tmpData[item.field] = {};
@@ -226,14 +203,45 @@ export default {
                     tmpData[item.field]._id = item._id;
                   });
                   this.data = tmpData;
-                }
-              })
-              .catch(() => {
-                this.new = true;
-              });
+                });
+            } else {
+              return this.$axios
+                .get(`/data/patient/${patientId}/crf/${crfId}`)
+                .then(payload => {
+                  this.record.id = payload.data.payload.crfRecordId;
+                  if (payload.data.payload.crfId !== crfId) {
+                    return this.$store
+                      .dispatch("crfs/GET_CRF", {
+                        crfId: payload.data.payload.crfId,
+                        include: true
+                      })
+                      .then(() => {
+                        this.record.crfId = payload.data.payload.crfId;
+                        const tmpData = {};
+                        payload.data.payload.data.forEach(item => {
+                          tmpData[item.field] = {};
+                          tmpData[item.field].value = item.value;
+                          tmpData[item.field]._id = item._id;
+                        });
+                        this.data = tmpData;
+                      });
+                  } else {
+                    this.record.crfId = payload.data.payload.crfId;
+                    const tmpData = {};
+                    payload.data.payload.data.forEach(item => {
+                      tmpData[item.field] = {};
+                      tmpData[item.field].value = item.value;
+                      tmpData[item.field]._id = item._id;
+                    });
+                    this.data = tmpData;
+                  }
+                })
+                .catch(() => {
+                  this.new = true;
+                });
+            }
           }
-        }
-      });
+        });
     },
     createDataSections() {
       this.section =
@@ -272,7 +280,8 @@ export default {
       } else {
         this.$axios
           .put(`/data/patient/${this.patientId}/crf/${this.record.id}/full`, {
-            data: this.data
+            data: this.data,
+            formsId: this.crf.formsId
           })
           .then(() => {
             console.log("updated!");
@@ -296,11 +305,10 @@ export default {
         this.data = {
           record: "test1"
         };
-        return this.$store.dispatch(
-          "crfs/GET_CRF_NEWEST",
-          this.record.crfId,
-          false
-        );
+        return this.$store.dispatch("crfs/GET_CRF_NEWEST", {
+          crfId: this.record.crfId,
+          include: false
+        });
       }
     }
   },
@@ -325,6 +333,7 @@ export default {
 hr.section {
   border: 1px solid;
 }
+
 h3 {
   text-align: left;
   margin: 10px;

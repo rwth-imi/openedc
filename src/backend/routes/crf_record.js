@@ -314,31 +314,40 @@ router.get("/api/data/patient/:patientId/crfData/:crfRecordId", (req, res) => {
       _id: req.params.crfRecordId
     },
     (err, doc) => {
-      db.data.find(
-        {
-          recordId: doc._id,
-          nextVersion: null
-        },
-        (err, data) => {
-          if (err) {
-            console.log("error", err);
-            res.json({
-              success: false,
-              error: err,
-              payload: null
-            });
-          } else {
-            res.json({
-              success: true,
-              error: false,
-              payload: {
-                crfId: doc.crfId,
-                data: data
-              }
-            });
+      if (err || doc === null) {
+        console.log("error", err);
+        res.json({
+          success: false,
+          error: err || "CRF record not found",
+          payload: null
+        });
+      } else {
+        db.data.find(
+          {
+            recordId: doc._id,
+            nextVersion: null
+          },
+          (err, data) => {
+            if (err) {
+              console.log("error", err);
+              res.json({
+                success: false,
+                error: err,
+                payload: null
+              });
+            } else {
+              res.json({
+                success: true,
+                error: false,
+                payload: {
+                  crfId: doc.crfId,
+                  data: data
+                }
+              });
+            }
           }
-        }
-      );
+        );
+      }
     }
   );
 });

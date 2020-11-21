@@ -2,12 +2,17 @@
   <div class="mainPage">
     <h1>{{ $t("crfOverview") }}</h1>
     <div class="" align="right">
-      <b-button pill variant="success" :to="{name: 'CRFUpload'}">{{ $t("Add") }}</b-button>
+      <b-button pill variant="success" :to="{ name: 'CRFUpload' }">
+        {{ $t("Add") }}
+      </b-button>
     </div>
     <b-table striped hover :items="crfs" :fields="fields">
       <template v-slot:cell(name)="data">
         <router-link
-          :to="{ name: 'CRFDetail', params: { crfId: data.item._id, section: 0 } }"
+          :to="{
+            name: 'CRFDetail',
+            params: { crfId: data.item._id, section: 0 }
+          }"
           >{{ data.value }}</router-link
         >
       </template>
@@ -15,12 +20,22 @@
         {{ data.item.count }}
       </template>
       <template v-slot:cell(createdAt)="data">
-        {{ (new Date(data.value)) | formatDate }}
+        {{ new Date(data.value) | formatDate }}
       </template>
       <template v-slot:cell(settings)="data">
-        <b-button pill variant="outline-success" :to="{ name: 'CRFUpload', params: {formsId: data.item.formsId }}">{{ $t("Edit") }}</b-button>
+        <b-button
+          pill
+          variant="outline-success"
+          :to="{ name: 'CRFUpload', params: { formsId: data.item.formsId } }"
+          >{{ $t("Edit") }}</b-button
+        >
         <b-button pill variant="outline-success">{{ $t("Export") }}</b-button>
-        <b-button pill variant="outline-danger" @click="deleteCRF(data.item.formsId)">{{ $t("Delete") }}</b-button>
+        <b-button
+          pill
+          variant="outline-danger"
+          @click="deleteCRF(data.item.formsId)"
+          >{{ $t("Delete") }}</b-button
+        >
       </template>
     </b-table>
   </div>
@@ -60,7 +75,7 @@ export default {
           label: this.$t("createdAt"),
           sortable: true
         },
-        this.$t("Settings")
+        { key: "settings", label: this.$t("Settings") }
       ]
     };
   }

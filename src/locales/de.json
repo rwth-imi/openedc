@@ -52,5 +52,7 @@
     "message": "Dies ist die Hilfe-Seite",
     "title": "Hilfe"
   },
-  "Config": "Konfiguration"
+  "Config": "Konfiguration",
+  "notStarted": "nicht gestartet",
+  "filled": "gefüllt"
 }

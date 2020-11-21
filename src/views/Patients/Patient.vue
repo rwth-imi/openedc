@@ -3,13 +3,13 @@
     <h1>{{ $t("Patient") }}: {{ patientId }}</h1>
     <b-row class="my-1">
       <b-col sm="2">
-        <label for="input-small">{{ $t("Search")}}:</label>
+        <label for="input-small">{{ $t("Search") }}:</label>
       </b-col>
       <b-col sm="10">
         <b-form-input
           v-model="search"
           size="sm"
-          :placeholder="$t('searchBy', { what: $t('crf'), by: $t('name')})"
+          :placeholder="$t('searchBy', { what: $t('crf'), by: $t('name') })"
         ></b-form-input>
       </b-col>
     </b-row>
@@ -18,19 +18,19 @@
         {{ data.item.name }}
       </template>
       <template v-slot:cell(status)="data">
-        {{ getStatus(data.item.formsId, data.item._id) }}
+        {{ getStatus(data.item.formsId) }}
       </template>
       <template v-slot:cell(settings)="data">
         <div class="settings">
           <b-button
-            v-if="filled(data.item.formsId, data.item._id)"
+            v-if="filled(data.item.formsId)"
             pill
             variant="outline-success"
             :to="{
               name: 'CRFData',
               params: { patientId: patientId, crfId: data.item._id, new: false }
             }"
-            >{{ $t("Edit")}}</b-button
+            >{{ $t("Edit") }}</b-button
           >
           <b-button
             pill
@@ -39,10 +39,10 @@
               name: 'CRFData',
               params: { patientId: patientId, crfId: data.item._id, new: true }
             }"
-            >{{ $t("New Record")}}</b-button
+            >{{ $t("NewRecord") }}</b-button
           >
-          <b-button pill variant="outline-success">{{ $t("Export")}}</b-button>
-          <b-button pill variant="outline-danger">{{ $t("Delete")}}</b-button>
+          <b-button pill variant="outline-success">{{ $t("Export") }}</b-button>
+          <b-button pill variant="outline-danger">{{ $t("Delete") }}</b-button>
         </div>
       </template>
     </b-table>
@@ -68,14 +68,15 @@ export default {
           label: this.$t("Status"),
           sortable: true
         },
-        this.$t("Settings")
+        { key: "settings", label: this.$t("Settings") }
       ],
       crfData: [],
       patientId: null
     };
   },
   created() {
-    if(!this.patientId && this.$route.params.patientId) this.patientId = this.$route.params.patientId;
+    if (!this.patientId && this.$route.params.patientId)
+      this.patientId = this.$route.params.patientId;
     this.$store.dispatch("crfs/GET_CRFS");
     this.$store.dispatch("patients/GET_PATIENT", this.patientId);
     this.$axios
@@ -85,7 +86,7 @@ export default {
       });
   },
   methods: {
-    getStatus(formsId, id) {
+    getStatus(formsId) {
       const filtered = this.crfData.filter(elem => elem.formsId === formsId);
       if (filtered.length > 0) {
         return filtered.length + " " + this.$t("filled");
@@ -93,11 +94,8 @@ export default {
         return this.$t("notStarted");
       }
     },
-    filled(formsId, id) {
-      console.log('filled', this.crfData, formsId, id)
-      return this.crfData.some(
-        elem => elem.formsId === formsId || elem.crfId === id //TODO nach || nur abwärtskompatibilität
-      );
+    filled(formsId) {
+      return this.crfData.some(elem => elem.formsId === formsId);
     }
   },
   computed: {

@@ -93,7 +93,7 @@ export default {
       if (!this.crf || !this.crf.sections || this.crf.name !== "Patient")
         return [
           { key: "_id", label: "ID", sortable: true },
-          this.$t("Settings")
+          { key: "settings", label: this.$t("Settings") }
         ];
       this.crf.sections.forEach(section => {
         section.subsection.forEach(subsection => {
@@ -108,7 +108,7 @@ export default {
           });
         });
       });
-      dataFields.push(this.$t("Settings"));
+      dataFields.push({ key: "settings", label: this.$t("Settings") });
       return dataFields;
     }
   },

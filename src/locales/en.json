@@ -52,5 +52,7 @@
     "message": "This is a help page",
     "title": "Help"
   },
-  "Config": "Config"
+  "Config": "Config",
+  "notStarted": "not started",
+  "filled": "filled"
 }

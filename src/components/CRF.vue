@@ -82,7 +82,7 @@ export default {
      *   title: String
      * }
      */
-    sections: Object,
+    sections: Array,
     crfId: String
   },
   data() {

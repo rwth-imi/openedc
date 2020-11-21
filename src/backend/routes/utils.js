@@ -1,5 +1,10 @@
 const db = require("./stores.js");
 
+/**
+ * This function gets all current CRFs with their newest version.
+ * @param callback(err, result) which should be called, when the result is ready.
+ * @param patient true, if the patient CRF should be part of the result and false if not.
+ */
 function getAllNewestCRFs(callback, patient = false) {
   db.forms.find(
     {
@@ -36,10 +41,18 @@ function getAllNewestCRFs(callback, patient = false) {
   );
 }
 
+/**
+ * This function gets all crfs with all versions
+ * @param callback(err, result) will be called when the result is ready.
+ */
 function getAllCRFs(callback) {
   db.crfs.find({}, callback);
 }
 
+/**
+ * This function gets the newest version of the patient CRF
+ * @param callback(err, result) will be called when the result is ready.
+ */
 function getPatientCRF(callback) {
   db.crfs.findOne(
     {
@@ -86,6 +99,13 @@ function getPatientCRF(callback) {
   );
 }
 
+/**
+ * This function gets the data of a patients patient CRF.
+ * @param patientId ID of the desired patient
+ * @param withId true, if the result should look like result.<FIELD> = { _id: <ID>, value: <VALUE>},
+ * false, if the result should look like result.<FIELD> = <VALUE>
+ * @param callback(err, result) will be called when the result is ready.
+ */
 function getPatientCRFForPatientId(patientId, withId = true, callback) {
   getPatientCRF((err, crf) => {
     if (err) {
@@ -113,7 +133,7 @@ function getPatientCRFForPatientId(patientId, withId = true, callback) {
               (err, data) => {
                 const tmpData = {};
                 data.forEach(item => {
-                  if(withId) {
+                  if (withId) {
                     tmpData[item.field] = {};
                     tmpData[item.field].value = item.value;
                     tmpData[item.field]._id = item._id;

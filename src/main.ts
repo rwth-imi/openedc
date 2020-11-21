@@ -26,12 +26,18 @@ library.add(faCaretDown, faArrowsAltH, faClipboardList, faUserInjured)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(VueSidebarMenu)
 
+/**
+ * filter for displaying a date
+ */
 Vue.filter('formatDate', function(value) {
   if (value) {
     return moment(value).format('YYYY/MM/DD')
   }
 });
 
+/**
+ * Filter for displaying date and time
+ */
 Vue.filter('formatDatetime', function(value) {
   if (value) {
     return moment(value).format('YYYY/MM/DD hh:mm')

@@ -46,6 +46,9 @@
 </template>
 
 <script>
+/**
+ * Component for displaying CRF
+ */
 import { mapState } from "vuex";
 import Checkboxes from "@/components/input_fields/Checkboxes.vue";
 import TextField from "@/components/input_fields/TextField.vue";
@@ -61,7 +64,27 @@ export default {
     RadioButtons,
     TextArea
   },
-  props: ["data", "sections", "section", "crfId"],
+  props: {
+    /**
+     * data object of current content of CRF
+     * {
+     *   fieldName: {
+     *     _id: String,
+     *     value: Any
+     *   }
+     * }
+     */
+    data: Object,
+    section: Number,
+    /**
+     * {
+     *   name: String,
+     *   title: String
+     * }
+     */
+    sections: Object,
+    crfId: String
+  },
   data() {
     return {
       localData: {

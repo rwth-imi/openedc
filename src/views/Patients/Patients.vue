@@ -1,8 +1,10 @@
 <template>
   <div class="mainPage">
-    <h1>{{ $t("Patients")}}</h1>
+    <h1>{{ $t("Patients") }}</h1>
     <div class="" align="right">
-      <b-button pill variant="success" to="/patients/register">{{ $t("Add") }}</b-button>
+      <b-button pill variant="success" to="/patients/register">{{
+        $t("Add")
+      }}</b-button>
     </div>
     <b-row class="my-1">
       <b-col sm="2">
@@ -13,7 +15,7 @@
           id="search"
           v-model="search"
           size="sm"
-          :placeholder="$t('searchBy', {what: $t('Patient'), by: $t('id')})"
+          :placeholder="$t('searchBy', { what: $t('Patient'), by: $t('id') })"
         ></b-form-input>
       </b-col>
     </b-row>
@@ -26,7 +28,7 @@
             name: 'Patient',
             params: { patientId: data.item._id }
           }"
-          >{{ $t("Select")}}</b-button
+          >{{ $t("Select") }}</b-button
         >
         <b-button
           pill
@@ -35,14 +37,14 @@
             name: 'PatientRegister',
             params: { patientId: data.item._id }
           }"
-          >{{ $t("Edit")}}</b-button
+          >{{ $t("Edit") }}</b-button
         >
-        <b-button pill variant="outline-success">{{ $t('Export')}}</b-button>
+        <b-button pill variant="outline-success">{{ $t("Export") }}</b-button>
         <b-button
           pill
           variant="outline-danger"
           @click="deletePatient(data.item._id)"
-          >{{ $t('Delete')}}</b-button
+          >{{ $t("Delete") }}</b-button
         >
       </template>
     </b-table>
@@ -61,6 +63,10 @@ export default {
   computed: {
     ...mapState("patients", ["patients"]),
     ...mapState("crfs", ["crf"]),
+    /**
+     * filters list of patients for search field.
+     * @returns {any[]}
+     */
     filteredList() {
       if (this.patients) {
         return this.patients.filter(patient => {
@@ -78,9 +84,17 @@ export default {
         return [];
       }
     },
+    /**
+     * fields for display table
+     * @returns {[]|({label: string, sortable: boolean, key: string}|string|VueI18n.LocaleMessages)[]}
+     */
     fields() {
       const dataFields = [];
-      if (!this.crf || !this.crf.sections || this.crf.name !== "Patient") return [{ key: "_id", label: "ID", sortable: true}, this.$t("Settings")];
+      if (!this.crf || !this.crf.sections || this.crf.name !== "Patient")
+        return [
+          { key: "_id", label: "ID", sortable: true },
+          this.$t("Settings")
+        ];
       this.crf.sections.forEach(section => {
         section.subsection.forEach(subsection => {
           subsection.items.forEach(item => {

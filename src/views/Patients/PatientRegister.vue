@@ -48,6 +48,7 @@ export default {
   },
   created() {
     this.patientId = this.$route.params.patientId;
+    // fetches the patient CRF
     this.$store.dispatch("crfs/GET_CRF_PATIENT").then(status => {
       if (status.success) {
         this.show = true;
@@ -65,8 +66,10 @@ export default {
             });
         }
       } else {
+        // If status code = 404 the patient CRF is not avaiable
+        // therefore patients can be created without data.
         if (status.errorCode === 404) {
-          this.$axios.post("patient/").then(({ data }) => {
+          this.$axios.post("patient/").then(() => {
             this.$router.push({ name: "Patients" });
           });
         }
@@ -75,6 +78,10 @@ export default {
   },
   methods: {
     onSubmit() {
+      // three possibities:
+      // 1. No patientID => create new patient
+      // 2. patientID, but no data before (Patient CRF uploaded later) then, create new record for patient
+      // 3. patientID and record: update existing data
       if (this.patientId !== null && this.patientId !== undefined) {
         if (this.new) {
           this.$axios

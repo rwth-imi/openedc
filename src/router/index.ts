@@ -8,6 +8,7 @@ import CRFs from "../views/CRFsOverview.vue";
 
 Vue.use(VueRouter);
 
+// routes of the application
 const routes: Array<RouteConfig> = [
   {
     path: "/",

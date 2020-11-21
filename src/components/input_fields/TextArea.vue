@@ -22,13 +22,33 @@
 
 <script>
 export default {
-  props: ["options", "value"],
+  props: {
+    /**
+     * Options for text area
+     * {
+     *  defaultValue: "",
+     *  label: "",
+     *  notes: "",
+     * }
+     */
+    options: {
+      type: Object,
+      required: true
+    },
+    /**
+     * Current value of text area
+     */
+    value: {}
+  },
   computed: {
     localValue: {
       get() {
-        return this.value ? this.value.value : this.options.defaultValue},
-      set(newValue) { this.$emit('changed', newValue)}
+        return this.value ? this.value.value : this.options.defaultValue;
+      },
+      set(newValue) {
+        this.$emit("changed", newValue);
+      }
     }
-  },
+  }
 };
 </script>

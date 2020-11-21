@@ -1,10 +1,25 @@
+/** Express router providing patient related routes
+ * @requires express
+ */
+
 const express = require("express");
 const router = express.Router();
 
 const db = require("./stores.js");
 const utils = require("./utils.js");
 
-router.post("/api/patient/", (req, res, next) => {
+/**
+ * Creates a patient
+ * @name /
+ * @params None
+ * @req.body None
+ * @return {
+ *     success: true || false,
+ *     error: false || err,
+ *     payload: inserted || null
+ * }
+ */
+router.post("/", (req, res) => {
   const patient = {
     deleted: false,
     createdAt: Date.now(),
@@ -30,7 +45,18 @@ router.post("/api/patient/", (req, res, next) => {
   });
 });
 
-router.get("/api/patient/", (req, res, next) => {
+/**
+ * Returns all patients
+ * @name /
+ * @params None
+ * @req.body None
+ * @return {
+ *     success: true || false,
+ *     error: false || err,
+ *     payload: patientObjectsArray || null
+ * }
+ */
+router.get("/", (req, res) => {
   db.patients.find(
     {
       deleted: false
@@ -54,7 +80,22 @@ router.get("/api/patient/", (req, res, next) => {
   );
 });
 
-router.get("/api/patient/full", (req, res, next) => {
+/**
+ * Returns all patients with CRFs
+ * @name /full
+ * @params None
+ * @req.body None
+ * @return {
+ *     success: true || false,
+ *     error: false || err,
+ *     payload: {
+ *         _id: patientId,
+ *         field1: value1,
+ *         ...
+ *     } || null
+ * }
+ */
+router.get("/full", (req, res) => {
   db.patients.find(
     {
       deleted: false
@@ -93,7 +134,7 @@ router.get("/api/patient/full", (req, res, next) => {
             });
           })
           .catch(err => {
-            if(patients.length >= 0) {
+            if (patients.length >= 0) {
               res.json({
                 success: true,
                 error: false,
@@ -113,7 +154,18 @@ router.get("/api/patient/full", (req, res, next) => {
   );
 });
 
-router.get("/api/patient/:patientId", (req, res, next) => {
+/**
+ * Returns the specified patient
+ * @name /:patientId
+ * @params patientId
+ * @req.body None
+ * @return {
+ *     success: true || false,
+ *     error: false || err,
+ *     payload: patientObject || null
+ * }
+ */
+router.get("/:patientId", (req, res) => {
   db.patients.findOne(
     {
       _id: req.params.patientId,
@@ -138,7 +190,24 @@ router.get("/api/patient/:patientId", (req, res, next) => {
   );
 });
 
-router.get("/api/patient/:patientId/full", (req, res, next) => {
+/**
+ * Returns the specified patient including their CRFs
+ * @name /:patientId/full
+ * @params patientId
+ * @req.body None
+ * @return {
+ *     success: true || false,
+ *     error: false || err,
+ *     payload: {
+ *         field1: {
+ *             _id: dataId,
+ *             value: value1
+ *         },
+ *         ...
+ *     } || null
+ * }
+ */
+router.get("/:patientId/full", (req, res) => {
   utils.getPatientCRFForPatientId(req.params.patientId, true, (err, data) => {
     if (err) {
       console.log("error", err);
@@ -157,7 +226,20 @@ router.get("/api/patient/:patientId/full", (req, res, next) => {
   });
 });
 
-router.delete("/api/patient/:patientId", (req, res, next) => {
+/**
+ * Deletes the specified patient
+ * @name /:patientId
+ * @params patientId
+ * @req.body None
+ * @return {
+ *     success: true || false,
+ *     error: false || err,
+ *     payload: {
+ *         deleted: patientId
+ *     } || null
+ * }
+ */
+router.delete("/:patientId", (req, res) => {
   db.patients.update(
     {
       _id: req.params.patientId
@@ -169,7 +251,7 @@ router.delete("/api/patient/:patientId", (req, res, next) => {
         deletedBy: req.body.user || "defaultUser"
       }
     },
-    (err, numReplaced) => {
+    err => {
       if (err) {
         console.log("error", err);
         res.json({

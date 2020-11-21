@@ -24,7 +24,24 @@
 <script>
 export default {
   name: "TextField",
-  props: ["options", "value"],
+  props: {
+    /**
+     * Options for text field
+     * {
+     *  defaultValue: "",
+     *  label: "",
+     *  notes: "",
+     * }
+     */
+    options: {
+      type: Object,
+      required: true
+    },
+    /**
+     * Current value of text field
+     */
+    value: {}
+  },
   computed: {
     localValue: {
       get() {

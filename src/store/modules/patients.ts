@@ -31,7 +31,7 @@ export default {
       state.patient = patient;
     },
     DELETE_PATIENT(state, patientId) {
-      state.patients.forEach(function(e, i, a) {
+      state.patients.forEach(function(e, i) {
         if (e.patientId === patientId) {
           state.patients.splice(i, 1);
         }
@@ -40,6 +40,11 @@ export default {
   },
 
   actions: {
+    /**
+     * Fetches all patients
+     * @param context
+     * @constructor
+     */
     GET_PATIENTS(context) {
       Vue.axios.get('/patient/')
         .then(payload => {
@@ -47,6 +52,11 @@ export default {
         })
         .catch(error => console.log(error))
     },
+    /**
+     * Fetches all patients including their data of patient crf
+     * @param context
+     * @constructor
+     */
     GET_PATIENTS_FULL(context) {
       Vue.axios.get('/patient/full')
           .then(payload => {
@@ -54,6 +64,12 @@ export default {
           })
           .catch(error => console.log(error))
     },
+    /**
+     * Fetches a specific patient
+     * @param context
+     * @param patientId
+     * @constructor
+     */
     GET_PATIENT(context, patientId) {
       return Vue.axios.get('/patient/'+patientId)
         .then(payload => {
@@ -61,23 +77,41 @@ export default {
         })
         .catch(error => console.log(error))
     },
+    /**
+     * Sends update command
+     * @param context
+     * @param patient
+     * @constructor
+     */
     PUT_PATIENT(context, patient) {
       return Vue.axios.put('/patient/' + patient.patientId, patient)
-        .then(payload => {
+        .then(() => {
             context.commit("SET_PATIENT", patient);
         })
         .catch(error => console.log(error))
     },
+    /**
+     * Sends create command
+     * @param context
+     * @param patient
+     * @constructor
+     */
     POST_PATIENT(context, patient) {
       return Vue.axios.post('/patient/', patient)
-        .then(payload => {
+        .then(() => {
             context.commit("SET_PATIENT", patient);
         })
         .catch(error => console.log(error))
     },
+    /**
+     * sends delete command
+     * @param context
+     * @param patientId
+     * @constructor
+     */
     DESTROY_PATIENT(context, patientId) {
       return Vue.axios.delete('/patient/' + patientId)
-        .then(payload => {
+        .then(() => {
           context.commit('DELETE_PATIENT', patientId)
         })
         .catch(error => console.log(error))

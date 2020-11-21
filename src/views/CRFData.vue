@@ -39,6 +39,9 @@ import { mapState } from "vuex";
 import ActionBar from "@/components/ActionBar";
 import CRF from "@/components/CRF";
 
+/**
+ * Component for managing CRF records of one patient
+ */
 export default {
   name: "CRFData",
   components: {
@@ -63,7 +66,12 @@ export default {
   },
   computed: {
     ...mapState("crfs", ["crfs", "crf"]),
+    /**
+     * Entries for SidebarMenu where the different CRFs are listed
+     * @returns {[{header: boolean, hiddenOnCollapse: boolean, title: *}, {icon: {attributes: {icon: string}, element: string}, href: {query: {patientId: default.computed.patientId}, name: string, params: {patientId: default.computed.patientId}}, title: string}, {header: boolean, hiddenOnCollapse: boolean, title: *}]}
+     */
     menu() {
+      // static fields
       const ret = [
         {
           header: true,
@@ -90,6 +98,7 @@ export default {
           hiddenOnCollapse: true
         }
       ];
+      // variable fields (CRFs)
       this.crfs.forEach(crfItem => {
         const child = [];
         crfItem.sections.forEach((sectionItem, index) => {
@@ -164,6 +173,13 @@ export default {
         crfId: this.$route.params.crfId
       };
     },
+    /**
+     * Fetches all necessary data like CRF skeleton, records of the crf and the data of the current record
+     * @param crfId required
+     * @param patientId required
+     * @param crfRecordId optional
+     * @returns {Promise<any>}
+     */
     fetchData(crfId, patientId, crfRecordId) {
       return this.$store
         .dispatch("crfs/GET_CRF", {
@@ -241,6 +257,9 @@ export default {
           }
         });
     },
+    /**
+     * takes the sections out of the crf for displaying
+     */
     createDataSections() {
       this.section =
         this.$route.params.section >= 0 ? this.$route.params.section : null;
@@ -259,7 +278,9 @@ export default {
         elem => elem.newestCRF === id || elem.crfId === id
       );
     },
-
+    /**
+     * Creates or updates the current CRF record.
+     */
     submit() {
       if (this.new) {
         this.$axios
@@ -293,6 +314,11 @@ export default {
         this.show = true;
       });
     },
+    /**
+     * function gets called, when the record changes by the user. Then all data will be refetched.
+     * @param record
+     * @returns {Promise<any>}
+     */
     changeRecord(record) {
       this.record = record;
       if (this.record.id !== "new") {
@@ -311,6 +337,11 @@ export default {
     }
   },
   watch: {
+    /**
+     * Route is watched, since the route changes, whenever a CRF is selected in the sidebar
+     * @param to
+     * @param from
+     */
     $route(to, from) {
       let crfRecordId = this.$route.params.crfRecordId;
       if (to.params.crfId === from.params.crfId) {

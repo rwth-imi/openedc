@@ -1,9 +1,22 @@
+/** Express router providing CRF Data related routes
+ * @requires express
+ */
+
 const express = require("express");
 const router = express.Router();
 
 const db = require("./stores.js");
 const utils = require("./utils.js");
 
+/**
+ * Inserts a data into data store
+ * @param patientId Id of the corresponding patient
+ * @param recordId Id of the corresponding record
+ * @param field Name of the field
+ * @param value
+ * @param user ID/Name of the user which sent the request
+ * @param callback(err, result) will be called when the result is ready.
+ */
 function insertData(patientId, recordId, field, value, user, callback) {
   const data = {
     patientId: patientId,
@@ -17,6 +30,17 @@ function insertData(patientId, recordId, field, value, user, callback) {
   db.data.insert(data, callback);
 }
 
+/**
+ * Updates a specific data field. It does not really update it, but insert
+ * a new entry and references the new entry in the old one.
+ * @param dataId Id of the data field
+ * @param patientId Id of the corresponding patient
+ * @param recordId Id of the corresponding record
+ * @param field Name of the field
+ * @param value
+ * @param user ID/Name of the user which sent the request
+ * @param callback(err, result) will be called when the result is ready.
+ */
 function putData(dataId, patientId, recordId, field, value, user, callback) {
   const data = {
     patientId: patientId,
@@ -49,6 +73,15 @@ function putData(dataId, patientId, recordId, field, value, user, callback) {
   });
 }
 
+/**
+ * Creates a new record.
+ * @param patientId Id of the corresponding patient
+ * @param crfId Id of the used CRF
+ * @param formsId Id of the form of the used CRF
+ * @param user ID/Name of the user which sent the request
+ * @param data All data fields
+ * @param callback(err, result) will be called when the result is ready.
+ */
 function saveNewRecord(patientId, crfId, formsId, user, data, callback) {
   db.crfRecord.count(
     {
@@ -69,11 +102,7 @@ function saveNewRecord(patientId, crfId, formsId, user, data, callback) {
       const insertedObjects = [];
       db.crfRecord.insert(crfInfo, (err, inserted) => {
         if (err) {
-          res.json({
-            success: false,
-            error: err,
-            payload: null
-          });
+          callback(err, null);
         } else {
           let remainCallbacks = Object.entries(data).length;
           for (const [name, item] of Object.entries(data)) {
@@ -106,7 +135,13 @@ function saveNewRecord(patientId, crfId, formsId, user, data, callback) {
   );
 }
 
-router.post("/api/data/patient/:patientId/crf/:crfId/full", (req, res) => {
+/**
+ * Creates a new record with all data.
+ * @name /patient/:patientId/crf/:crfId/full
+ * @params patientId, crfId
+ * @req.body formsId, data
+ */
+router.post("/patient/:patientId/crf/:crfId/full", (req, res) => {
   saveNewRecord(
     req.params.patientId,
     req.params.crfId,
@@ -130,14 +165,19 @@ router.post("/api/data/patient/:patientId/crf/:crfId/full", (req, res) => {
     }
   );
 });
-const groupBy = function(xs, key) {
-  return xs.reduce(function(rv, x) {
-    (rv[x[key]] = rv[x[key]] || []).push(x);
-    return rv;
-  }, {});
-};
 
-router.get("/api/data/patient/:patientId/crfs", (req, res) => {
+/**
+ * Returns the data of all crfs of the patient.
+ * @name /patient/:patientId/crfs
+ * @params patientId
+ * @req.body None
+ * @return {
+ *     success: true || false,
+ *     error: false || err,
+ *     payload: [crfRecordObject (additional newestVersionId)] || null
+ * }
+ */
+router.get("/patient/:patientId/crfs", (req, res) => {
   utils.getAllCRFs((err, crfs) => {
     if (err) {
       console.log("error", err);
@@ -180,7 +220,22 @@ router.get("/api/data/patient/:patientId/crfs", (req, res) => {
   });
 });
 
-router.get("/api/data/patient/:patientId/crf/:crfId/records", (req, res) => {
+/**
+ * Returns all records of a crf of a patient
+ * @name /patient/:patientId/crf/:crfId/records
+ * @params patientId, crfId (can be any version but not formsId)
+ * @req.body None
+ * @return {
+ *     success: true || false,
+ *     error: false || err,
+ *     payload: {
+ *         date: createdAt,
+ *         id: _id,
+ *         crfId: crfId
+ *     } || null
+ * }
+ */
+router.get("/patient/:patientId/crf/:crfId/records", (req, res) => {
   const patientId = req.params.patientId;
   const crfId = req.params.crfId;
   db.crfs.findOne(
@@ -237,10 +292,23 @@ router.get("/api/data/patient/:patientId/crf/:crfId/records", (req, res) => {
   );
 });
 
-// get newest
-router.get("/api/data/patient/:patientId/crf/:crfId", (req, res) => {
+/**
+ * Returns the data of the newest record
+ * @name /patient/:patientId/crf/:crfId
+ * @params patientId, crfId (can be any version but not formsId)
+ * @req.body None
+ * @return {
+ *     success: true || false,
+ *     error: false || err,
+ *     payload: {
+ *         crfId: crfId,
+ *         crfRecordId: _id,
+ *         data: data
+ *     } || null
+ * }
+ */
+router.get("/patient/:patientId/crf/:crfId", (req, res) => {
   const patientId = req.params.patientId;
-  const crfId = req.params.crfId;
   db.crfs.findOne(
     {
       _id: req.params.crfId
@@ -308,7 +376,21 @@ router.get("/api/data/patient/:patientId/crf/:crfId", (req, res) => {
   );
 });
 
-router.get("/api/data/patient/:patientId/crfData/:crfRecordId", (req, res) => {
+/**
+ * Returns the data of record
+ * @name /patient/:patientId/crfData/:crfRecordId
+ * @params patientId, crfRecordId
+ * @req.body None
+ * @return {
+ *     success: true || false,
+ *     error: false || err,
+ *     payload: {
+ *         crfId: doc.crfId,
+ *         data: data
+ *     } || null
+ * }
+ */
+router.get("/patient/:patientId/crfData/:crfRecordId", (req, res) => {
   db.crfRecord.findOne(
     {
       _id: req.params.crfRecordId
@@ -352,7 +434,18 @@ router.get("/api/data/patient/:patientId/crfData/:crfRecordId", (req, res) => {
   );
 });
 
-router.put("/api/data/patient/:patientId/crf/:crfRecordId/full", (req, res) => {
+/**
+ * Updates all data of one record by inserting new data entry and referencing the new entry in the old ones.
+ * @name /patient/:patientId/crf/:crfRecordId/full
+ * @params patientId, crfRecordId
+ * @req.body formsId, data, migrate (if a newer version of crf exists update to new one by doing a copy)
+ * @return {
+ *     success: true || false,
+ *     error: false || err,
+ *     payload: insertedDataObjects || null
+ * }
+ */
+router.put("/patient/:patientId/crf/:crfRecordId/full", (req, res) => {
   db.crfRecord.findOne(
     {
       _id: req.params.crfRecordId
@@ -438,7 +531,18 @@ router.put("/api/data/patient/:patientId/crf/:crfRecordId/full", (req, res) => {
   );
 });
 
-router.post("/api/data/patient/:patientId/crf/:recordId", (req, res) => {
+/**
+ * Inserts on e data entry
+ * @name /patient/:patientId/crf/:recordId
+ * @params patientId, crfRecordId
+ * @req.body data
+ * @return {
+ *     success: true || false,
+ *     error: false || err,
+ *     payload: insertedDataObject || null
+ * }
+ */
+router.post("/patient/:patientId/crf/:recordId", (req, res) => {
   insertData(
     req.params.patientId,
     req.params.recordId,
@@ -464,7 +568,18 @@ router.post("/api/data/patient/:patientId/crf/:recordId", (req, res) => {
   );
 });
 
-router.put("/api/data/:dataId/", (req, res) => {
+/**
+ * Updates one data entry by inserting new data entry and referencing the new entry in the old one.
+ * @name /:dataId
+ * @params dataId
+ * @req.body data
+ * @return {
+ *     success: true || false,
+ *     error: false || err,
+ *     payload: numReplaced || null
+ * }
+ */
+router.put("/:dataId/", (req, res) => {
   db.data.findOne(
     {
       _id: req.params.dataId

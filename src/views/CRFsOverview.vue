@@ -35,12 +35,7 @@ export default {
     this.$store.dispatch("crfs/GET_CRFS", true);
   },
   computed: {
-    ...mapState("crfs", ["crfs"]),
-    filteredList() {
-      return this.crfs.filter(crf => {
-        return crf._id.includes(this.search.toLowerCase());
-      });
-    }
+    ...mapState("crfs", ["crfs"])
   },
   methods: {
     deleteCRF(formsId) {

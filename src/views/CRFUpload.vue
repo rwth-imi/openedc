@@ -38,14 +38,14 @@
               ></b-form-file>
             </b-form-group>
           </b-form-group>
-          <b-button type="submit" variant="primary">{{ $t('Verify') }}</b-button>
-          <b-button type="reset" variant="danger">{{  $t('Reset') }}</b-button>
+          <b-button type="submit" variant="primary">{{ $t("Verify") }}</b-button>
+          <b-button type="reset" variant="danger">{{  $t("Reset") }}</b-button>
         </b-form>
       </b-card>
       <b-card bg-variant="light">
         <b-row>
           <b-col sm="3">
-            <h2>{{ $t('Log') }}:</h2>
+            <h2>{{ $t("Log") }}:</h2>
           </b-col>
           <b-col sm="9">
             <div class="log" v-for="(line, index) in log" :key="index">
@@ -59,7 +59,7 @@
       <b-card bg-variant="light">
         <b-row>
           <b-col sm="3">
-            <h2>{{ $t('CRFs') }}:</h2>
+            <h2>{{ $t("CRFs") }}:</h2>
           </b-col>
           <b-col sm="9">
             <b-form-group class="log" :label="$t('SelectCRFToUpload')">
@@ -122,11 +122,15 @@ export default {
           return ".txt";
       }
     },
+    /**
+     * Uploads the file and gets back a log of the verification.
+     * @param evt
+     */
     onSubmit(evt) {
       evt.preventDefault();
       const formData = new FormData();
       const format = this.getFormat();
-      formData.append("filename", "CRF-" + Date.now() + format);
+      formData.append("filename", "CRF-" + Date.now() + format); // TODO: Better filenames
       formData.append("file", this.form.file);
       formData.append("format", this.form.format);
       this.axios

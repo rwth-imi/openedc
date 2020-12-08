@@ -160,13 +160,21 @@ function log(type, msg) {
  * @returns {{crfs: [any], log: [{msg: *, type: *}], withoutError: boolean}}
  */
 function JSONParser(fileContent) {
-  const jsonObject = JSON.parse(fileContent);
-  // TODO: Verify!
-  return {
-    crfs: [jsonObject],
-    log: [log("warning", "Verification not done!"), log("info", "Verifed!")],
-    withoutError: true
-  };
+  try {
+    const jsonObject = JSON.parse(fileContent);
+    // TODO: Verify!
+    return {
+      crfs: [jsonObject],
+      log: [log("warning", "Verification not done!"), log("info", "Verifed!")],
+      withoutError: true
+    };
+  } catch (e) {
+    return {
+      crfs: [],
+      log: [log("error", "Parsing of JSON failed!")],
+      withoutError: false
+    };
+  }
 }
 
 /**

@@ -4,7 +4,7 @@ import Home from "../views/Home.vue";
 import Patients from "../views/Patients/Patients.vue";
 import PatientRegister from "../views/Patients/PatientRegister.vue";
 import Patient from "../views/Patients/Patient.vue";
-import CRFs from "../views/CRFsOverview.vue";
+import CRFs from "../views/CRF/CRFsOverview.vue";
 
 Vue.use(VueRouter);
 
@@ -40,17 +40,17 @@ const routes: Array<RouteConfig> = [
     path: "/createCRF",
     name: "CRFUpload",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/CRFUpload.vue")
+      import(/* webpackChunkName: "about" */ "../views/CRF/CRFUpload.vue")
   },
   {
     path: "/CRF/:crfId/:section",
     name: "CRFDetail",
-    component: () => import(/* webpackChunkName: "about" */ "../views/CRFDetail.vue")
+    component: () => import(/* webpackChunkName: "about" */ "../views/CRF/CRFDetail.vue")
   },
   {
     path: "/CRF/:crfId/data/:patientId",
     name: "CRFData",
-    component: () => import(/* webpackChunkName: "about" */ "../views/CRFData.vue")
+    component: () => import(/* webpackChunkName: "about" */ "../views/CRF/CRFData.vue")
   },
   {
     path: "/about",

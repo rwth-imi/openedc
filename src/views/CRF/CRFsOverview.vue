@@ -66,6 +66,10 @@ export default {
           sortable: true
         },
         {
+          key: "description",
+          label: this.$t("Description")
+        },
+        {
           key: "countFilled",
           label: this.$t("Count"),
           sortable: true

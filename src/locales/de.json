@@ -54,5 +54,6 @@
   },
   "Config": "Konfiguration",
   "notStarted": "nicht gestartet",
-  "filled": "gefüllt"
+  "filled": "gefüllt",
+  "Description": "Beschreibung"
 }

@@ -64,6 +64,10 @@ export default {
           sortable: true
         },
         {
+          key: "description",
+          label: this.$t("Description")
+        },
+        {
           key: "status",
           label: this.$t("Status"),
           sortable: true

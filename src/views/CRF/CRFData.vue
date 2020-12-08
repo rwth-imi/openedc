@@ -113,7 +113,7 @@ export default {
                 section: index,
                 crfRecordId: this.record.id
               },
-              hash: `${sectionItem.name}`
+              hash: `section_${index}`
             }
           });
         });
@@ -204,7 +204,7 @@ export default {
             });
           this.resetData();
           if (!this.new) {
-            if (crfRecordId) {
+            if (crfRecordId && crfRecordId !== "new") {
               this.record.id = crfRecordId;
               this.record.crfId = crfId;
               this.$axios

@@ -1,6 +1,10 @@
 <template>
-  <div v-if="section === null">
-    <div v-for="(sectionItem, section) in crf.sections" :key="section">
+  <div>
+    <div
+      v-for="(sectionItem, section) in crf.sections"
+      :key="section"
+      :id="'section_' + section"
+    >
       <h2>{{ $t("Section") }}: {{ sectionItem.title }}</h2>
       <hr class="section" />
       <div
@@ -20,26 +24,6 @@
             @changed="changed(subsection, index, item.name, $event)"
           ></component>
         </div>
-      </div>
-    </div>
-  </div>
-  <div v-else>
-    <div
-      v-for="subsection in crf.sections[section].subsection"
-      :key="subsection.name"
-    >
-      <div v-if="subsection.name !== ''">
-        <hr />
-        <h3>{{ subsection.name }}</h3>
-      </div>
-      <div v-for="(item, index) in subsection.items" :key="item.name">
-        <component
-          :ref="item.name"
-          v-bind:is="item.type"
-          :options="item"
-          :value="localData[item.name]"
-          @changed="changed(subsection, index, item.name, $event)"
-        ></component>
       </div>
     </div>
   </div>
@@ -97,6 +81,12 @@ export default {
   },
   created() {
     this.localData = this.data;
+  },
+  mounted() {
+    if (this.section !== null) {
+      const elem = this.$el.querySelector("#section_" + this.section);
+      window.scrollTo(0, elem.offsetTop);
+    }
   },
   methods: {
     changed(section, index, name, changedValue) {

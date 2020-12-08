@@ -27,6 +27,9 @@
                 >{{ lang.title }}</b-dropdown-item
               >
             </b-nav-item-dropdown>
+            <b-nav-item disabled class="version"
+              >{{ $t("Version") }}: {{ version }}</b-nav-item
+            >
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
@@ -41,6 +44,11 @@ import { mapGetters } from "vuex";
 export default {
   name: "app",
   components: {},
+  data() {
+    return {
+      version: process.env.VUE_APP_VERSION
+    };
+  },
   computed: {
     ...mapGetters("language", ["languages"])
   },
@@ -78,6 +86,11 @@ export default {
 
 #nav a.router-link-exact-active {
   color: #e2f0d9;
+}
+
+.nav-item.version {
+  font-size: 0.8rem;
+  padding: 0.2rem;
 }
 
 #main {

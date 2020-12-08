@@ -103,7 +103,7 @@ router.get("/full", (req, res) => {
     (err, patients) => {
       if (err) {
         console.log("error", err);
-        res.json({
+        res.status(500). json({
           success: false,
           error: err,
           payload: null
@@ -142,7 +142,7 @@ router.get("/full", (req, res) => {
               });
             } else {
               console.log("error", err);
-              res.json({
+              res.status(500).json({
                 success: false,
                 error: err,
                 payload: null
@@ -174,7 +174,7 @@ router.get("/:patientId", (req, res) => {
     (err, doc) => {
       if (err) {
         console.log("error", err);
-        res.json({
+        res.status(500).json({
           success: false,
           error: err,
           payload: null
@@ -254,7 +254,7 @@ router.delete("/:patientId", (req, res) => {
     err => {
       if (err) {
         console.log("error", err);
-        res.json({
+        res.status(500).json({
           success: false,
           error: err,
           payload: null

@@ -150,7 +150,7 @@ router.post("/patient/:patientId/crf/:crfId/full", (req, res) => {
     req.body.data,
     (err, success) => {
       if (err) {
-        res.json({
+        res.status(500).json({
           success: false,
           err: err,
           payload: null
@@ -181,7 +181,7 @@ router.get("/patient/:patientId/crfs", (req, res) => {
   utils.getAllCRFs((err, crfs) => {
     if (err) {
       console.log("error", err);
-      res.json({
+      res.status(500).json({
         success: false,
         error: err,
         payload: null
@@ -195,7 +195,7 @@ router.get("/patient/:patientId/crfs", (req, res) => {
         (err, docs) => {
           if (err) {
             console.log("error", err);
-            res.json({
+            res.status(500).json({
               success: false,
               error: err,
               payload: null
@@ -245,7 +245,7 @@ router.get("/patient/:patientId/crf/:crfId/records", (req, res) => {
     (err, doc) => {
       if (err) {
         console.log("error", err);
-        res.json({
+        res.status(500).json({
           success: false,
           error: err,
           payload: null
@@ -316,7 +316,7 @@ router.get("/patient/:patientId/crf/:crfId", (req, res) => {
     (err, crf) => {
       if (err) {
         console.log("error", err);
-        res.json({
+        res.status(500).json({
           success: false,
           error: err,
           payload: null
@@ -331,7 +331,7 @@ router.get("/patient/:patientId/crf/:crfId", (req, res) => {
           .exec((err, docs) => {
             if (err) {
               console.log("error", err);
-              res.json({
+              res.status(500).json({
                 success: false,
                 error: err,
                 payload: null
@@ -350,7 +350,7 @@ router.get("/patient/:patientId/crf/:crfId", (req, res) => {
                   },
                   (err, data) => {
                     if (err) {
-                      res.json({
+                      res.status(500).json({
                         success: false,
                         error: err,
                         payload: null
@@ -396,9 +396,16 @@ router.get("/patient/:patientId/crfData/:crfRecordId", (req, res) => {
       _id: req.params.crfRecordId
     },
     (err, doc) => {
-      if (err || doc === null) {
+      if (err) {
         console.log("error", err);
-        res.json({
+        res.status(500).json({
+          success: false,
+          error: err,
+          payload: null
+        });
+      } else if(doc === null){
+        console.log("error", err);
+        res.status(404).json({
           success: false,
           error: err || "CRF record not found",
           payload: null
@@ -412,7 +419,7 @@ router.get("/patient/:patientId/crfData/:crfRecordId", (req, res) => {
           (err, data) => {
             if (err) {
               console.log("error", err);
-              res.json({
+              res.status(500).json({
                 success: false,
                 error: err,
                 payload: null
@@ -451,10 +458,18 @@ router.put("/patient/:patientId/crf/:crfRecordId/full", (req, res) => {
       _id: req.params.crfRecordId
     },
     (err, doc) => {
-      if (err || doc === null) {
-        res.json({
+      if (err) {
+        console.log("error", err);
+        res.status(500).json({
           success: false,
-          err: err,
+          error: err,
+          payload: null
+        });
+      } else if(doc === null){
+        console.log("error", err);
+        res.status(404).json({
+          success: false,
+          error: "CRF record not found",
           payload: null
         });
       } else {
@@ -472,7 +487,7 @@ router.put("/patient/:patientId/crf/:crfRecordId/full", (req, res) => {
                 req.body.data,
                 (err, success) => {
                   if (err) {
-                    res.json({
+                    res.status(500).json({
                       success: false,
                       err: err,
                       payload: null
@@ -507,7 +522,7 @@ router.put("/patient/:patientId/crf/:crfRecordId/full", (req, res) => {
                     remainCallbacks--;
                     if (remainCallbacks <= 0) {
                       if (errors.length > 0) {
-                        res.json({
+                        res.status(500).json({
                           success: false,
                           err: errors,
                           payload: null
@@ -552,7 +567,7 @@ router.post("/patient/:patientId/crf/:recordId", (req, res) => {
     (err, inserted) => {
       if (err) {
         console.log("error", err);
-        res.json({
+        res.status(500).json({
           success: false,
           error: err,
           payload: null
@@ -587,7 +602,7 @@ router.put("/:dataId/", (req, res) => {
     (err, doc) => {
       if (err) {
         console.log("error", err);
-        res.json({
+        res.status(500).json({
           success: false,
           error: err,
           payload: null
@@ -603,7 +618,7 @@ router.put("/:dataId/", (req, res) => {
           (err, numReplaced) => {
             if (err) {
               console.log("error", err);
-              res.json({
+              res.status(500).json({
                 success: false,
                 error: err,
                 payload: null

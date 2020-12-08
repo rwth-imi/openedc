@@ -274,7 +274,7 @@ router.post("/", (req, res) => {
     req.body.crf,
     req.body.user || "defaultUser",
     err => {
-      res.json({
+      res.status(500).json({
         success: false,
         error: err,
         payload: null
@@ -307,7 +307,7 @@ router.put("/:formsId", (req, res) => {
     req.body.crf,
     req.body.user || "defaultUser",
     err => {
-      res.json({
+      res.status(500).json({
         success: false,
         error: err,
         payload: null
@@ -340,7 +340,7 @@ router.get("/", (req, res) => {
   utils.getAllNewestCRFs((err, docs) => {
     if (err) {
       console.log("error", err);
-      res.json({
+      res.status(500).json({
         success: false,
         error: err,
         payload: null
@@ -370,12 +370,21 @@ router.get("/", (req, res) => {
 router.get("/patient", (req, res) => {
   utils.getPatientCRF((err, doc) => {
     if (err) {
-      console.log("error", err);
-      res.status(404).json({
-        success: false,
-        error: err,
-        payload: null
-      });
+      if (err === "Patient CRF not found") {
+        console.log("error", err);
+        res.status(404).json({
+          success: false,
+          error: err,
+          payload: null
+        });
+      } else {
+        console.log("error", err);
+        res.status(500).json({
+          success: false,
+          error: err,
+          payload: null
+        });
+      }
     } else {
       res.json({
         success: true,
@@ -406,7 +415,7 @@ router.get("/:crfId", (req, res) => {
     (err, doc) => {
       if (err) {
         console.log("error", err);
-        res.json({
+        res.status(500).json({
           success: false,
           error: err,
           payload: null
@@ -442,7 +451,7 @@ router.get("/:crfId/newest", (req, res) => {
     (err, doc) => {
       if (err) {
         console.log("error", err);
-        res.json({
+        res.status(500).json({
           success: false,
           error: err,
           payload: null
@@ -455,7 +464,7 @@ router.get("/:crfId/newest", (req, res) => {
           (err, formObj) => {
             if (err) {
               console.log("error", err);
-              res.json({
+              res.status(500).json({
                 success: false,
                 error: err,
                 payload: null
@@ -468,7 +477,7 @@ router.get("/:crfId/newest", (req, res) => {
                 (err, crf) => {
                   if (err) {
                     console.log("error", err);
-                    res.json({
+                    res.status(500).json({
                       success: false,
                       error: err,
                       payload: null
@@ -511,7 +520,7 @@ router.get("/:formsId/:version", (req, res) => {
     (err, doc) => {
       if (err) {
         console.log("error", err);
-        res.json({
+        res.status(500).json({
           success: false,
           error: err,
           payload: null
@@ -552,7 +561,7 @@ router.delete("/:formsId/", (req, res) => {
     req.body.user || "defaultUser",
     err => {
       console.log("error", err);
-      res.json({
+      res.status(500).json({
         success: false,
         error: err,
         payload: null

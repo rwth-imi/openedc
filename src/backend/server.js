@@ -5,6 +5,7 @@ const cors = require("cors");
 const patient = require("./routes/patient.js");
 const crf = require("./routes/crf.js");
 const crfRecord = require("./routes/crf_record.js");
+const configRoute = require("./routes/config.js");
 
 // Configuration of server
 const app = express();
@@ -35,6 +36,7 @@ app.get("/", function(req, res) {
 app.use("/api/data/", crfRecord);
 app.use("/api/patient/", patient);
 app.use("/api/crf/", crf);
+app.use("/api/config/", configRoute);
 
 // Start Server
 app.listen(3000, function() {

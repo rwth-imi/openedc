@@ -13,7 +13,7 @@
             <b-nav-item to="/">{{ $t("home.title") }}</b-nav-item>
             <b-nav-item to="/patients">{{ $t("Patients") }}</b-nav-item>
             <b-nav-item to="/crfs">{{ $t("CRFs") }}</b-nav-item>
-            <b-nav-item to="/about">{{ $t("Config") }}</b-nav-item>
+            <b-nav-item to="/config">{{ $t("Config") }}</b-nav-item>
             <b-nav-item to="/help">{{ $t("help.title") }}</b-nav-item>
           </b-navbar-nav>
 
@@ -40,7 +40,7 @@
   </div>
 </template>
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapState } from "vuex";
 export default {
   name: "app",
   components: {},
@@ -50,7 +50,17 @@ export default {
     };
   },
   computed: {
-    ...mapGetters("language", ["languages"])
+    ...mapGetters("language", ["languages"]),
+    ...mapState("config", ["config"])
+  },
+  created() {
+    this.$store.dispatch("config/GET_CONFIG").then(() => {
+      if (this.config.language) {
+        this.changeLanguage({
+          value: this.config.language
+        });
+      }
+    });
   },
   methods: {
     changeLanguage(lang) {

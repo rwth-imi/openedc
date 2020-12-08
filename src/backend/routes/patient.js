@@ -30,7 +30,7 @@ router.post("/", (req, res) => {
   db.patients.insert(patient, (err, inserted) => {
     if (err) {
       console.log("error", err);
-      res.json({
+      res.status(500).json({
         success: false,
         error: err,
         payload: null
@@ -64,7 +64,7 @@ router.get("/", (req, res) => {
     (err, docs) => {
       if (err) {
         console.log("error", err);
-        res.json({
+        res.status(500).json({
           success: false,
           error: err,
           payload: null
@@ -103,7 +103,7 @@ router.get("/full", (req, res) => {
     (err, patients) => {
       if (err) {
         console.log("error", err);
-        res.status(500). json({
+        res.status(500).json({
           success: false,
           error: err,
           payload: null

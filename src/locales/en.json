@@ -58,5 +58,7 @@
   "notStarted": "not started",
   "filled": "filled",
   "Description": "Description",
-  "Version": "Version"
+  "Version": "Version",
+  "selectLanguage": "Choose Language",
+  "Language": "Default Language"
 }

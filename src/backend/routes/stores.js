@@ -33,4 +33,9 @@ db.patients = new Datastore({
   autoload: true
 });
 
+db.config = new Datastore({
+  filename: "db/config.db",
+  autoload: true
+});
+
 module.exports = db;

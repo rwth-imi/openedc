@@ -58,5 +58,7 @@
   "notStarted": "nicht gestartet",
   "filled": "gefüllt",
   "Description": "Beschreibung",
-  "Version": "Version"
+  "Version": "Version",
+  "selectLanguage": "Sprache wählen",
+  "Language": "Sprache der Anwendung"
 }

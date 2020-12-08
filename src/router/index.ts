@@ -53,10 +53,10 @@ const routes: Array<RouteConfig> = [
     component: () => import(/* webpackChunkName: "about" */ "../views/CRF/CRFData.vue")
   },
   {
-    path: "/about",
-    name: "About",
+    path: "/config",
+    name: "Config",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue")
+      import(/* webpackChunkName: "about" */ "../views/Config.vue")
   },
   {
     path: "/help",

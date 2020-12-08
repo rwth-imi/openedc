@@ -6,7 +6,9 @@
   "home": {
     "title": "Home",
     "welcome": "Willkommen beim CRF Managing Tool",
-    "message": "Mit diesem Tool können sie CRFS erstellen, bearbeiten, ausfüllen und exportieren."
+    "message": "Mit diesem Tool können sie CRFS erstellen, bearbeiten, ausfüllen und exportieren.",
+    "patients": "Manage Patients",
+    "crfs": "Manage CRFs"
   },
   "selectOption": "Wählen Sie eine Option",
   "selectRecord": "Wählen Sie einen Bericht",
@@ -55,5 +57,6 @@
   "Config": "Konfiguration",
   "notStarted": "nicht gestartet",
   "filled": "gefüllt",
-  "Description": "Beschreibung"
+  "Description": "Beschreibung",
+  "Version": "Version"
 }

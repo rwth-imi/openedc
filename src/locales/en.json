@@ -6,7 +6,9 @@
   "home": {
     "title": "Home",
     "welcome": "Welcome to the CRF Managing Tool",
-    "message": "With this tool you can create, edit, fill out and export a CRF."
+    "message": "With this tool you can create, edit, fill out and export a CRF.",
+    "patients": "Manage Patients",
+    "crfs": "Manage CRFs"
   },
   "selectOption": "Please select an option",
   "selectRecord": "Please select a record",
@@ -55,5 +57,6 @@
   "Config": "Config",
   "notStarted": "not started",
   "filled": "filled",
-  "Description": "Description"
+  "Description": "Description",
+  "Version": "Version"
 }

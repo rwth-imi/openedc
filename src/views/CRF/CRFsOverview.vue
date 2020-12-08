@@ -16,6 +16,9 @@
           >{{ data.value }}</router-link
         >
       </template>
+      <!--<template v-slot:cell(countFilled)="data">
+        {{ data.item.count }}
+      </template>-->
       <template v-slot:cell(countFilled)="data">
         {{ data.item.count }}
       </template>
@@ -29,7 +32,7 @@
           :to="{ name: 'CRFUpload', params: { formsId: data.item.formsId } }"
           >{{ $t("Edit") }}</b-button
         >
-        <b-button pill variant="outline-success">{{ $t("Export") }}</b-button>
+<!--        <b-button pill variant="outline-success">{{ $t("Export") }}</b-button>-->
         <b-button
           pill
           variant="outline-danger"

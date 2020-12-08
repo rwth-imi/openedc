@@ -41,7 +41,7 @@
             }"
             >{{ $t("NewRecord") }}</b-button
           >
-          <b-button pill variant="outline-success">{{ $t("Export") }}</b-button>
+<!--          <b-button pill variant="outline-success">{{ $t("Export") }}</b-button>-->
           <b-button pill variant="outline-danger">{{ $t("Delete") }}</b-button>
         </div>
       </template>

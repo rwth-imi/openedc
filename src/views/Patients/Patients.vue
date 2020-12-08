@@ -39,7 +39,7 @@
           }"
           >{{ $t("Edit") }}</b-button
         >
-        <b-button pill variant="outline-success">{{ $t("Export") }}</b-button>
+<!--        <b-button pill variant="outline-success">{{ $t("Export") }}</b-button>-->
         <b-button
           pill
           variant="outline-danger"

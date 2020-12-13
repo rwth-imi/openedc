@@ -1,6 +1,6 @@
 <template>
   <div class="about mainPage">
-    <h1>Configuration of the application</h1>
+    <h1>{{ $t("ConfigurationTitle") }}</h1>
     <b-card bg-variant="light">
       <b-form @submit="save" v-if="show">
         <b-form-group

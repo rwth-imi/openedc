@@ -60,5 +60,6 @@
   "Description": "Beschreibung",
   "Version": "Version",
   "selectLanguage": "Sprache wählen",
-  "Language": "Sprache der Anwendung"
+  "Language": "Sprache der Anwendung",
+  "ConfigurationTitle": "Konfiguration der Anwendung"
 }
